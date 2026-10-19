@@ -119,14 +119,23 @@ a durable schedule entry that survives every restart.
 account (`claude auth login` — the Telegram channel needs that login), [Bun](https://bun.sh) (the
 Telegram plugin's server runs on it), git, and a phone with Telegram. Windows 10/11 is the tested
 home; on Linux the test suite passes and systemd units are included as a reference (use `python3` where
-the examples say `python`); macOS should work but is untested.
+the examples say `python`; on Windows, `py` if `python` is not on your PATH); macOS should work but is
+untested. The core needs nothing beyond the standard library.
 
 **1 · Get it**
 
 ```bash
 git clone https://github.com/PepeMilanese/Jarvis.git
 cd Jarvis
-cp jarvis.example.toml jarvis.toml        # optional: every key has a default
+cp jarvis.example.toml jarvis.toml        # optional: every key has a default (cmd.exe: copy)
+```
+
+**Try a worker before any bot exists** — the launcher works on its own:
+
+```bash
+python -m jarvis start --task "Write a haiku about a computer that never sleeps into haiku.txt"
+python -m jarvis status            # watch it run; then:
+python -m jarvis result --slot 1   # its JARVIS-SUMMARY block, with a proof line
 ```
 
 **2 · Make a bot and connect it** (once). In Telegram, message [@BotFather](https://t.me/BotFather),
@@ -140,7 +149,8 @@ send `/newbot`, copy the token. Then, **inside the Jarvis folder**, start `claud
 Quit, start `claude --channels plugin:telegram@claude-plugins-official` in the same folder, DM your bot —
 it answers with a pairing code — and run `/telegram:access pair <code>`, then
 `/telegram:access policy allowlist` so strangers are dropped silently. Quit that session again: **only one
-process may poll a bot**, and from now on that is the dispatcher.
+process may poll a bot**, and from now on that is the dispatcher. (Already running a Telegram bot through
+Claude Code on this machine? The dispatcher will take it over — see [Security](#security-model--read-this-before-you-run-it).)
 
 **3 · Check everything**
 
@@ -151,12 +161,16 @@ python -m jarvis doctor
 It checks Python, the CLI and its login, Bun, the plugin, the token (never shown), the allowlist, the
 manuals, and the optional parts. Fix every `FAIL`.
 
-**4 · Voice memos** (optional, ~1.6 GB download)
+**4 · Voice memos** (optional, ~1.6 GB download, about 5 minutes)
 
 ```bash
 python -m jarvis stt-setup
 python -m jarvis stt tests/fixtures/hello.ogg      # → "Hello Jarvis. Please check the nightly build, …"
 ```
+
+It builds `stt/.venv` (with [uv](https://docs.astral.sh/uv/) when it is installed, else `venv` + `pip`)
+and fetches the pinned model. Hugging Face prints a deprecation warning and an "unauthenticated
+requests" notice along the way — both harmless.
 
 **5 · Run it**
 
@@ -350,6 +364,18 @@ everything, Whisper included, runs on a 6-core office CPU. **What does it cost?*
 subscription; the quota readout tells you how much of the 5-hour and weekly windows you have used.
 **Can I use it for non-code work?** Most of the 283 jobs were: research, data wrangling, documents, a
 conference website, scripts for the machine itself.
+
+## Run the tests
+
+```bash
+python -m unittest discover -s tests      # 78 tests, about 1.5 minutes; no model, login or bot needed
+```
+
+A fake `claude` (`tests/fake_claude.py`) stands in for the real one, so the whole lifecycle — slots,
+watchdogs, questions and answers, the supervisor's guards, the schedule — runs against real processes
+without calling a model. One test is skipped unless `JARVIS_QUOTA_LIVE=1` (it makes a live quota call),
+and the two Whisper end-to-end tests run only after `stt-setup`. The same suite runs in CI on Windows
+and Ubuntu with Python 3.11–3.13.
 
 ## Credits
 
