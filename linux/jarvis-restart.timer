@@ -1,0 +1,10 @@
+# Every morning at 06:45: a fresh dispatcher context. Running jobs are not touched.
+[Unit]
+Description=Daily fresh-context restart of the Jarvis dispatcher
+
+[Timer]
+OnCalendar=*-*-* 06:45:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

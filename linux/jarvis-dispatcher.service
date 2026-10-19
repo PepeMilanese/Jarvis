@@ -1,0 +1,30 @@
+# systemd USER unit: the supervisor, restarted if it ever exits.
+#
+#   mkdir -p ~/.config/systemd/user && cp linux/jarvis-*.service linux/jarvis-*.timer ~/.config/systemd/user/
+#   # edit WorkingDirectory below to where you cloned Jarvis, then:
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now jarvis-dispatcher.service jarvis-restart.timer
+#   loginctl enable-linger "$USER"     # keep user services running with nobody logged in
+#
+# A user unit, not a system one, on purpose: the Claude login (~/.claude) and the Telegram plugin's
+# state are per-user. Reference units - the Python they run is tested on Linux; adapt freely.
+[Unit]
+Description=Jarvis dispatcher (supervised headless Claude Code session)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Jarvis
+Environment=PATH=%h/.bun/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env python3 -m jarvis dispatcher
+ExecStop=/usr/bin/env python3 -m jarvis dispatcher --stop
+# KillMode=process: a stop/restart signals ONLY the supervisor (ExecStop already stops its session and the
+# poller). The default (control-group) would also kill every running job's watchdog and worker, which are
+# in this unit's cgroup - and the daily restart would end every job mid-flight.
+KillMode=process
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=default.target

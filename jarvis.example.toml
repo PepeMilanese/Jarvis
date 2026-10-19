@@ -1,0 +1,37 @@
+# jarvis.example.toml - copy to jarvis.toml (git-ignored) and adjust. Every key is optional:
+# anything you leave out keeps the default shown here.
+
+[dispatcher]
+manual = "manual/DISPATCHER.md"          # the dispatcher's operating manual (appended to its system prompt)
+channel = "plugin:telegram@claude-plugins-official"
+model = ""                               # "" = the CLI's default
+effort = ""                              # low | medium | high | xhigh | max | "" (CLI default)
+permission_mode = "bypassPermissions"    # it is headless: nobody can answer a permission prompt (see SECURITY in README)
+add_dirs = []                            # extra folders the dispatcher may READ to answer questions
+
+[workers]
+slots = 3
+model = ""                               # e.g. "claude-opus-5-5[1m]" - the full id; the [1m] suffix asks for the 1M window
+effort = ""                              # e.g. "xhigh"
+permission_mode = "bypassPermissions"
+budget_usd = 0                           # 0 = no cap (no --max-budget-usd); set one if you want a per-job ceiling
+timeout_minutes = 0                      # 0 = no ceiling: the dispatcher stops a WEDGED job, not a timer
+contract = "manual/WORKER.md"            # your copy of the worker contract
+add_home = true                          # general jobs may read/write under your home folder
+protected_dirs = []                      # folders no job may run in, e.g. ["~/code/live-checkout"]
+oauth_token_file = ""                    # optional: a file with a `claude setup-token` token for the workers
+allow_api_key = false                    # true = workers may use ANTHROPIC_API_KEY from the environment (pay-per-use)
+
+[projects]                               # names the dispatcher can resolve when you say "the website"
+# website = "~/code/website"
+# notes = "D:/notes"
+
+[telegram]
+state_dir = ""                           # default: $TELEGRAM_STATE_DIR or ~/.claude/channels/telegram
+
+[stt]
+model = "large-v3-turbo"                 # see stt/README.md for the benchmark
+language = "auto"                        # or e.g. "en": faster, but a forced language TRANSLATES other speech
+candidates = []                          # restrict auto-detection, e.g. ["de", "en"] - helps languages Whisper confuses
+max_minutes = 10                         # longer memos are refused before the model loads (exit 6)
+models_dir = ""                          # default: stt/models

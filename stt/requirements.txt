@@ -1,0 +1,6 @@
+# stt/.venv only - installed by `python -m jarvis stt-setup`, never into your global Python.
+faster-whisper==1.2.1
+ctranslate2==4.8.2
+# PyAV 19 dropped av.open(metadata_errors=...), which faster-whisper 1.2.1 still passes (a TypeError on
+# every file); 18.1.0 is the newest that works, and its wheel carries the Opus/MP3/AAC decoders (no ffmpeg).
+av==18.1.0

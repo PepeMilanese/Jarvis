@@ -1,0 +1,7 @@
+# The daily fresh-context restart (fired by jarvis-restart.timer). See jarvis-dispatcher.service.
+[Unit]
+Description=Restart the Jarvis dispatcher with a fresh context
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user restart jarvis-dispatcher.service

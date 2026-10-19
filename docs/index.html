@@ -1,0 +1,1259 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jarvis — run an AI dev team from your phone</title>
+<meta name="description" content="Text or voice-memo a task from Telegram; a headless Claude Code dispatcher on an always-on PC hands it to up to three parallel worker sessions and reports every milestone — and the proof — back to your phone.">
+<meta name="theme-color" content="#04060d">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jarvis">
+<meta property="og:title" content="Jarvis — run an AI dev team from your phone">
+<meta property="og:description" content="A Telegram message becomes a Claude Code worker job on an always-on PC. 283 jobs, 320 worker-hours and 60 merged PRs in 40 days — open source.">
+<meta property="og:url" content="https://pepemilanese.github.io/Jarvis/">
+<meta property="og:image" content="https://pepemilanese.github.io/Jarvis/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="JARVIS — run an AI dev team from your phone. Phone, Telegram, dispatcher and three worker slots.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jarvis — run an AI dev team from your phone">
+<meta name="twitter:description" content="A Telegram message becomes a Claude Code worker job on an always-on PC. 283 jobs, 320 worker-hours and 60 merged PRs in 40 days — open source.">
+<meta name="twitter:image" content="https://pepemilanese.github.io/Jarvis/assets/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2305070f'/%3E%3Ccircle cx='16' cy='16' r='10.5' fill='none' stroke='%2322d3ee' stroke-width='2.4' stroke-dasharray='11.5 5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='3.8' fill='%23a78bfa'/%3E%3C/svg%3E">
+<script>document.documentElement.className='js'</script>
+<style>
+:root{
+--bg:#04060d;--ink:#eaf0fb;--ink2:#b6c0d6;--mut:#8b96ae;
+--line:rgba(150,170,255,.12);--line2:rgba(150,170,255,.22);
+--cy:#22d3ee;--cy2:#7ee8fa;--vi:#8b5cf6;--vi2:#b39dfa;--am:#fbbf24;--gr:#34d399;--rd:#fb7185;--tg:#3ea6f5;--pk:#f472b6;--ind:#818cf8;
+--sans:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";
+--disp:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Display","Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";
+--mono:ui-monospace,"SF Mono","Cascadia Code","Cascadia Mono","JetBrains Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:72px}
+body{font-family:var(--sans);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+background:radial-gradient(1100px 700px at 88% -8%,rgba(139,92,246,.17),transparent 62%),radial-gradient(900px 640px at -12% 6%,rgba(34,211,238,.10),transparent 60%),var(--bg)}
+a{color:var(--cy2)}
+img,svg{display:block}
+code,.mono{font-family:var(--mono)}
+:focus-visible{outline:2px solid var(--cy2);outline-offset:3px}
+.wrap{width:min(1200px,100% - 48px);margin-inline:auto}
+.skip{position:absolute;left:12px;top:-60px;z-index:99;background:#fff;color:#000;padding:8px 14px;border-radius:8px}
+.skip:focus{top:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);background:rgba(4,6,13,.62);border-bottom:1px solid rgba(150,170,255,.08)}
+.nav-in{display:flex;align-items:center;gap:28px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font:800 17px var(--disp);letter-spacing:.2em}
+.brand svg{width:28px;height:28px}
+.nav nav{display:flex;gap:4px;margin-left:auto}
+.nav nav a{color:var(--ink2);text-decoration:none;font-size:14px;padding:7px 11px;border-radius:9px;transition:color .2s,background .2s}
+.nav nav a:hover{color:#fff;background:rgba(255,255,255,.05)}
+.gh-sm{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);color:var(--ink);text-decoration:none;font:600 14px var(--sans);background:rgba(255,255,255,.03)}
+.gh-sm:hover{background:rgba(255,255,255,.08)}
+.gh-sm svg,.btn svg{width:18px;height:18px;fill:currentColor}
+
+/* shared */
+.sec{position:relative;padding:clamp(64px,8vw,104px) 0}
+.sh{max-width:780px;margin-bottom:44px}
+.sh.c{text-align:center;margin-inline:auto}
+#pc .sh{max-width:920px}
+.eye{display:inline-flex;align-items:center;gap:10px;margin-bottom:16px;font:600 12.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--cy2)}
+.eye::before{content:"";width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--cy))}
+h2{font:800 clamp(31px,4.3vw,52px)/1.08 var(--disp);letter-spacing:-.025em;background:linear-gradient(180deg,#fff 30%,#b9c3da);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:4px}
+.sh p{margin-top:16px;font-size:clamp(16px,1.6vw,18.5px);color:var(--ink2);max-width:700px}
+.sh.c p{margin-inline:auto}
+.g{background:linear-gradient(90deg,var(--cy2),var(--vi2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.glass{background:linear-gradient(180deg,rgba(24,32,58,.55),rgba(11,16,31,.55));border:1px solid var(--line);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 24px 60px -34px rgba(0,0,0,.9)}
+.k{font:500 .84em var(--mono);color:#a5f3fc;background:rgba(103,232,249,.075);border:1px solid rgba(103,232,249,.17);padding:.1em .45em;border-radius:6px;overflow-wrap:anywhere}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 24px;border-radius:14px;font:650 15.5px var(--sans);text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s;cursor:pointer;border:0}
+.btn:hover{transform:translateY(-2px)}
+.btn-p{color:#06111c;background:linear-gradient(135deg,#a5f3fc,#22d3ee 42%,#a78bfa);box-shadow:0 14px 34px -12px rgba(34,211,238,.65),inset 0 1px 0 rgba(255,255,255,.55)}
+.btn-g{color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--line2)}
+.btn-g:hover{background:rgba(255,255,255,.08)}
+.rv{transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.js .rv:not(.in){opacity:0;transform:translateY(26px)}
+
+/* hero */
+.hero{position:relative;padding:36px 0 36px;overflow:hidden;isolation:isolate}
+.hbg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.grid{position:absolute;inset:-1px 0 0;background-image:linear-gradient(rgba(126,160,255,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(126,160,255,.075) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 75% 70% at 55% 35%,#000 35%,transparent 100%);mask-image:radial-gradient(ellipse 75% 70% at 55% 35%,#000 35%,transparent 100%)}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
+.o1{width:520px;height:520px;right:-80px;top:-60px;background:radial-gradient(circle,rgba(139,92,246,.55),transparent 70%)}
+.o2{width:460px;height:460px;left:-140px;top:260px;background:radial-gradient(circle,rgba(34,211,238,.33),transparent 70%);animation-duration:22s}
+@keyframes drift{to{transform:translate(40px,30px) scale(1.08)}}
+.trails{position:absolute;left:0;right:0;top:0;height:640px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 46%,#000 66%);mask-image:linear-gradient(90deg,transparent 46%,#000 66%)}
+.trail{position:absolute;left:0;height:1px;width:160px;top:calc(var(--r)*64px);background:linear-gradient(90deg,transparent,var(--c));opacity:.9;animation:run var(--d) linear var(--dl) infinite;transform:translateX(-200px)}
+.trail::after{content:"";position:absolute;right:-2px;top:-2px;width:5px;height:5px;border-radius:50%;background:var(--c);box-shadow:0 0 10px 2px var(--c)}
+.trail.v{left:calc(var(--x)*64px);top:0;width:1px;height:140px;background:linear-gradient(180deg,transparent,var(--c));animation-name:runv;transform:translateY(-200px)}
+.trail.v::after{right:-2px;top:auto;bottom:-2px}
+@keyframes run{to{transform:translateX(110vw)}}
+@keyframes runv{to{transform:translateY(800px)}}
+.hero-in{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:40px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:7px 14px 7px 10px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.035);font:500 13.5px var(--sans);color:var(--ink2)}
+.live{width:8px;height:8px;border-radius:50%;background:var(--gr);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:live 2s infinite}
+@keyframes live{70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+h1{margin-top:18px}
+.wm{display:block;font:900 clamp(66px,9.6vw,134px)/.92 var(--disp);letter-spacing:.06em;background:linear-gradient(100deg,#ecfeff 0%,#7ee8fa 30%,#a78bfa 62%,#e9d5ff 80%,#7ee8fa 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 28px rgba(34,211,238,.28));animation:sheen 9s ease-in-out infinite alternate;margin-left:-.04em}
+@keyframes sheen{to{background-position:100% 0}}
+.tagl{display:block;margin-top:16px;font:750 clamp(28px,3.7vw,48px)/1.1 var(--disp);letter-spacing:-.02em;color:#fff}
+.lead{margin-top:20px;font-size:clamp(16px,1.5vw,18.5px);color:var(--ink2);max-width:600px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hv{position:relative;height:560px;display:grid;place-items:center}
+.rings{position:absolute;width:560px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.rings g{transform-box:view-box;transform-origin:280px 280px}
+.rings .r1{animation:spin 80s linear infinite}
+.rings .r2{animation:spin 46s linear infinite reverse}
+.rings .r3{animation:spin 30s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hp{position:relative;width:272px;height:548px;border-radius:46px;padding:9px;background:linear-gradient(150deg,#323b50,#0b0e16 38%,#1b2130 70%,#3a4358);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 40px 90px -24px rgba(0,0,0,.95),0 0 90px -12px rgba(34,211,238,.28);animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.hp-scr{position:relative;height:100%;border-radius:38px;overflow:hidden;background:radial-gradient(120% 70% at 20% 0%,#3b2a7a 0%,transparent 60%),radial-gradient(120% 70% at 100% 100%,#0d5266 0%,transparent 55%),#0a0e1d}
+.isl{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:24px;border-radius:14px;background:#000}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 0;font:650 12.5px var(--sans);color:#fff;height:38px}
+.sig{display:flex;gap:2px;align-items:flex-end}
+.sig i{width:3px;background:#fff;border-radius:1px}
+.sig i:nth-child(1){height:4px}.sig i:nth-child(2){height:6px}.sig i:nth-child(3){height:8px}.sig i:nth-child(4){height:10px}
+.bat{width:22px;height:11px;border:1.4px solid rgba(255,255,255,.8);border-radius:3px;padding:1px;margin-left:6px}
+.bat b{display:block;height:100%;width:80%;background:#fff;border-radius:1px}
+.lock{text-align:center;margin-top:18px;color:#fff}
+.lock small{display:block;font:600 14px var(--sans);opacity:.85}
+.lock span{display:block;font:300 66px/1 var(--disp);letter-spacing:-.02em;margin-top:2px}
+.stack{position:absolute;left:12px;right:12px;top:186px;height:330px}
+.hn{position:absolute;left:0;right:0;top:0;display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:18px;background:rgba(38,46,72,.62);border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transform:translateY(calc(var(--i)*70px)) scale(calc(1 - var(--i)*.035));opacity:calc(1 - var(--i)*.2);transition:transform .7s cubic-bezier(.2,.85,.2,1),opacity .7s;transform-origin:top center;height:62px}
+.hn.enter{transform:translateY(-26px) scale(.94);opacity:0}
+.hn.out{opacity:0!important}
+.hn-ic{flex:none;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22d3ee,#8b5cf6);display:grid;place-items:center}
+.hn-ic svg{width:20px;height:20px}
+.hn-b{min-width:0;flex:1}
+.hn-h{display:flex;justify-content:space-between;font:700 10.5px var(--sans);letter-spacing:.08em;color:rgba(255,255,255,.7)}
+.hn-h span{font-weight:500;letter-spacing:0}
+.hn-t{font:500 12.8px/1.3 var(--sans);color:#fff;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:96px;height:4px;border-radius:3px;background:rgba(255,255,255,.75)}
+.chip{position:absolute;display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:12px;background:rgba(13,19,38,.72);border:1px solid var(--line2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:600 12px var(--mono);letter-spacing:.06em;color:var(--ink2);white-space:nowrap;box-shadow:0 14px 34px -14px rgba(0,0,0,.8);animation:float 6s ease-in-out infinite}
+.chip b{color:#fff;font-weight:650}
+.chip .d{width:8px;height:8px;border-radius:50%;background:#55627c}
+.chip .d.run{background:var(--cy);box-shadow:0 0 10px var(--cy);animation:blink 1.3s infinite}
+.chip .d.ok{background:var(--gr);box-shadow:0 0 10px var(--gr)}
+@keyframes blink{50%{opacity:.35}}
+.ch1{right:calc(50% + 98px);top:92px;animation-delay:-1s}
+.ch2{left:calc(50% + 104px);top:140px;animation-delay:-3s}
+.ch3{right:calc(50% + 92px);bottom:56px;animation-delay:-2s}
+.ch4{left:calc(50% + 94px);bottom:18px;animation-delay:-4s}
+.stats{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.st{position:relative;padding:20px 22px 18px;overflow:hidden}
+.st::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--sc),transparent);opacity:.9}
+.st b{display:block;font:800 clamp(34px,3.9vw,50px)/1 var(--disp);letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#fff;text-shadow:0 0 30px color-mix(in srgb,var(--sc) 45%,transparent)}
+.st span{display:block;margin-top:8px;font-size:14.5px;color:var(--ink2);line-height:1.35}
+.snote{margin-top:14px;font:500 13px var(--mono);color:var(--mut);letter-spacing:.02em}
+
+/* flow */
+.flow{padding:14px;border-radius:26px;position:relative}
+.fbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.tabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--line);overflow-x:auto;scrollbar-width:none;max-width:100%}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font:600 14px var(--sans);color:var(--ink2);padding:9px 14px;border-radius:10px;border:0;background:transparent;cursor:pointer;white-space:nowrap;transition:background .25s,color .25s}
+.tab:hover{color:#fff}
+.tab[aria-selected=true]{color:#fff;background:linear-gradient(180deg,rgba(34,211,238,.2),rgba(139,92,246,.2));box-shadow:inset 0 0 0 1px rgba(126,232,250,.38)}
+.ctrls{display:flex;gap:6px;align-items:center}
+.ib{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--ink);cursor:pointer;transition:background .2s,transform .15s}
+.ib:hover{background:rgba(255,255,255,.1)}
+.ib:active{transform:scale(.94)}
+.ib svg{width:18px;height:18px;fill:currentColor}
+.ib.pl{width:48px;height:48px;border-radius:50%;border:0;background:linear-gradient(135deg,#7ee8fa,#8b5cf6);color:#06111c;box-shadow:0 8px 24px -8px rgba(34,211,238,.7)}
+.ib.pl .i-pa{display:none}.ib.pl.on .i-pa{display:block}.ib.pl.on .i-pl{display:none}
+.fmain{display:grid;grid-template-columns:minmax(0,1fr) 322px;gap:18px;align-items:stretch}
+.dcol{display:flex;flex-direction:column;gap:12px;min-width:0}
+.dia{position:relative;border-radius:18px;border:1px solid var(--line);background:radial-gradient(rgba(126,160,255,.11) 1px,transparent 1.3px) 0 0/18px 18px,radial-gradient(80% 60% at 50% 40%,rgba(34,211,238,.06),transparent 70%),rgba(3,6,14,.55);padding:8px}
+.dia svg{width:100%;max-width:770px;margin:0 auto;height:auto;overflow:visible}
+.sep{align-self:center;font-size:11.5px;font-weight:600;color:#c7d3df;background:rgba(0,0,0,.32);padding:2px 10px;border-radius:10px;margin-bottom:2px;flex:none}
+.cap{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:start;padding:12px 18px 10px;border-radius:16px;border:1px solid var(--line);background:rgba(3,6,14,.45)}
+.cap-t{grid-row:span 2;font:800 22px/1 var(--mono);color:var(--cy2);padding-top:3px;min-width:96px;white-space:nowrap}
+.cap-t small{display:block;font:600 10px var(--mono);letter-spacing:.14em;color:var(--mut);margin-bottom:6px}
+.cap-w{display:flex;justify-content:space-between;gap:10px;font:700 15.5px var(--sans);color:#fff}
+.cap-w span{font:500 12px var(--mono);color:var(--mut);white-space:nowrap}
+.cap-d{font-size:15px;color:var(--ink2);line-height:1.5;min-height:3em}
+@media (max-width:1240px){.cap-d{min-height:4.5em}}
+.cap-c{grid-column:2;justify-self:start;margin-top:2px;font-size:12.5px}
+.tl{grid-column:1/-1;list-style:none;display:flex;gap:4px;margin-top:4px;overflow-x:auto;padding:4px 2px 4px;scrollbar-width:none}
+.tl::-webkit-scrollbar{display:none}
+.prog{grid-column:1/-1}
+.tl button{font:600 11px var(--mono);color:var(--mut);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:999px;padding:4px 7px;cursor:pointer;white-space:nowrap;transition:all .25s}
+.tl button:hover{color:#fff}
+.tl .done button{color:var(--ink2);border-color:rgba(52,211,153,.3)}
+.tl .cur button{color:#06111c;background:var(--cy2);border-color:var(--cy2);box-shadow:0 0 16px rgba(34,211,238,.5)}
+.prog{height:3px;border-radius:3px;background:rgba(255,255,255,.06);margin-top:6px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--vi));transition:width .5s ease}
+
+/* svg diagram */
+.dg text{font-family:var(--sans)}
+.dg .frame{fill:rgba(139,92,246,.045);stroke:rgba(167,139,250,.5);stroke-dasharray:5 6;stroke-width:1.2}
+.dg .flab{font:700 10px var(--mono)!important;letter-spacing:.2em;fill:#b39dfa}
+.dg .flab2{font:500 10px var(--mono)!important;fill:#8b96ae}
+.dg .eb{fill:none;stroke:rgba(140,160,255,.24);stroke-width:1.6}
+.dg .el{fill:none;stroke-width:2.8;opacity:0}
+.dg .nb{fill:#0b1122;stroke:var(--c);stroke-opacity:.42;stroke-width:1.3;transition:stroke-opacity .35s,fill .35s,filter .35s}
+.dg .on>.nb,.dg .on>.sf{stroke-opacity:1;fill:#0f1a33;filter:drop-shadow(0 0 9px color-mix(in srgb,var(--c) 60%,transparent))}
+.dg .nr{fill:none;stroke:var(--c);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.dg .hit>.nr{animation:ring .75s ease-out}
+.dg .tick>.nr{animation:ring .8s ease-out 3}
+@keyframes ring{0%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(1.14,1.5)}}
+.dg .t1{fill:#eef3fc;font-weight:650}
+.dg .t2{fill:#8b96ae;font-weight:500}
+.dg .on .t2{fill:#c3cbe0}
+.dg .ni{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.dg .down>.nb{stroke:#fb7185;stroke-opacity:1;fill:rgba(251,113,133,.14);filter:drop-shadow(0 0 10px rgba(251,113,133,.6))}
+.dg .slot{--c:#22d3ee}
+.dg .sf{fill:rgba(255,255,255,.018);stroke:rgba(140,160,255,.24);stroke-width:1.2;transition:stroke .35s,fill .35s}
+.dg .sl{font:700 10.5px var(--mono)!important;letter-spacing:.16em;fill:#8b96ae}
+.dg .sd{fill:#475569;transition:fill .3s}
+.dg .sst{font-size:10.5px;font-weight:650;fill:#8b96ae}
+.dg .st-busy .sd{fill:#fbbf24;opacity:.75}.dg .st-busy .sst{fill:#d9b65c}
+.dg .st-run .sd,.dg .st-q .sd{animation:blink 1.1s infinite}
+.dg .st-run .sd{fill:#22d3ee}.dg .st-run>.sf{stroke:rgba(34,211,238,.6)}.dg .st-run .sst{fill:#7ee8fa}
+.dg .st-q .sd{fill:#fbbf24}.dg .st-q>.sf{stroke:rgba(251,191,36,.7);fill:rgba(251,191,36,.05)}.dg .st-q .sst{fill:#fcd34d}
+.dg .st-sum .sd{fill:#a78bfa}.dg .st-sum>.sf{stroke:rgba(167,139,250,.7)}.dg .st-sum .sst{fill:#c4b5fd}
+.dg .st-done .sd{fill:#34d399}.dg .st-done>.sf{stroke:rgba(52,211,153,.7);fill:rgba(52,211,153,.06)}.dg .st-done .sst{fill:#6ee7b7}
+.dg .act rect{fill:#22d3ee;transform-box:fill-box;transform-origin:50% 100%;opacity:0}
+.dg .st-run .act rect{opacity:.95;animation:eq .8s ease-in-out infinite alternate}
+.dg .st-busy .act rect{opacity:.5;fill:#fbbf24;animation:eq 1.4s ease-in-out infinite alternate}
+.dg .act rect:nth-child(2){animation-delay:-.3s}.dg .act rect:nth-child(3){animation-delay:-.6s}
+@keyframes eq{0%{transform:scaleY(.25)}100%{transform:scaleY(1)}}
+.dg .wpt{fill:rgba(244,114,182,.15)}
+.dg .wpf{fill:#f472b6;transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0)}
+.dg .busy .wpf{animation:wp 1.6s linear forwards}
+.dg .fin .wpf{transform:scaleX(1)}
+@keyframes wp{to{transform:scaleX(1)}}
+.dg .pk{transition:opacity .25s}
+.dg .pkh{fill:var(--pc);opacity:.4;filter:blur(4px)}
+.dg .pkc{fill:#fff;filter:drop-shadow(0 0 5px var(--pc))}
+.dg .pkr{fill:rgba(4,8,18,.92);stroke:var(--pc);stroke-width:1}
+.dg .pkt{font:700 10px var(--mono)!important;fill:#eef3fc}
+
+/* telegram phone */
+.pcol{display:flex;justify-content:center;align-items:stretch}
+.ph{width:100%;max-width:322px;height:auto;min-height:600px;max-height:780px;border-radius:48px;padding:9px;background:linear-gradient(150deg,#323b50,#0b0e16 38%,#1b2130 70%,#3a4358);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 30px 70px -24px rgba(0,0,0,.95),0 0 70px -16px rgba(62,166,245,.35)}
+.scr{position:relative;height:100%;border-radius:40px;overflow:hidden;background:#0e1621;display:flex;flex-direction:column}
+.scr .isl{top:9px;width:88px;height:25px}
+.scr .sbar{padding:12px 24px 0;height:40px;background:#17212b}
+.tgh{display:flex;align-items:center;gap:10px;padding:6px 12px 9px;background:#17212b;border-bottom:1px solid rgba(0,0,0,.35)}
+.tgh .bk{font:400 26px/1 var(--sans);color:#6ab3f3;margin:-3px 2px 0 0}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#22d3ee,#8b5cf6);display:grid;place-items:center;flex:none}
+.av svg{width:22px;height:22px}
+.tgn b{display:block;font:650 15px/1.2 var(--sans);color:#fff}
+.tgn span{font-size:12.5px;color:#7f91a4}
+.tgn span.ty{color:#6ab3f3}
+.chat{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;padding:10px 9px 9px;overflow:hidden;contain:size;
+background:#0e1621 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.022' stroke-width='1.4'%3E%3Ccircle cx='14' cy='16' r='6'/%3E%3Cpath d='M48 10l8 8m0-8l-8 8M30 52c4-6 12-6 16 0M62 56l6 6 8-12'/%3E%3Crect x='8' y='54' width='12' height='10' rx='3'/%3E%3C/g%3E%3C/svg%3E")}
+.b{max-width:86%;padding:7px 10px 5px;border-radius:15px;font-size:13.4px;line-height:1.38;color:#eef3f8;word-wrap:break-word;flex:none}
+.b.me{align-self:flex-end;background:#2b5278;border-bottom-right-radius:5px;transform-origin:100% 100%}
+.b.bot{align-self:flex-start;background:#182533;border-bottom-left-radius:5px;transform-origin:0 100%}
+.b.new{animation:pop .42s cubic-bezier(.2,.9,.3,1.15) both}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.9)}}
+.b .ft{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:2px;min-height:14px}
+.b .tm{margin-left:auto;font-size:10.5px;color:#7d93a8;white-space:nowrap}
+.b.me .tm{color:#8fb3d6}
+.ck{font-style:normal;color:#6ab3f3;margin-left:2px;letter-spacing:-3px}
+.rx{display:inline-flex;align-items:center;padding:1px 8px;border-radius:12px;background:rgba(106,179,243,.2);font-size:13px;line-height:20px}
+.rx[hidden]{display:none}
+.rx.pop{animation:rxp .5s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes rxp{from{transform:scale(0)}}
+.pf{margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.08);font:500 11.2px/1.4 var(--mono);color:#86efac}
+.opt{display:block;margin-top:4px;font:500 12px/1.45 var(--mono);color:#c9d6e3}
+.rq{border-left:2px solid #6ab3f3;padding:1px 0 1px 7px;margin-bottom:4px;font-size:12px;line-height:1.3}
+.rq b{display:block;color:#6ab3f3;font-weight:650}
+.rq span{color:#c3d1de;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.vc{display:flex;align-items:center;gap:8px;padding:2px 0}
+.vp{width:34px;height:34px;border-radius:50%;background:#6ab3f3;display:grid;place-items:center;flex:none}
+.vp svg{width:13px;height:13px;fill:#2b5278;margin-left:2px}
+.vw{display:flex;gap:2px;align-items:center;height:22px}
+.vw i{width:2.5px;border-radius:2px;background:#b9d4ee}
+.vd{font-size:11px;color:#a9c4de;display:block}
+.inp{display:flex;align-items:center;gap:10px;padding:8px 12px 22px;background:#17212b}
+.inp span{flex:1;height:34px;border-radius:17px;background:#0e1621;font-size:13.5px;color:#5f7184;display:flex;align-items:center;padding:0 14px}
+.inp svg{width:22px;height:22px;fill:#7f91a4;flex:none}
+.vocab{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.vocab span{font-size:13px;color:var(--ink2);padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.025)}
+.vtitle{text-align:center;margin-top:30px;font:600 12px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+
+/* numbers */
+.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.bt{padding:22px 24px}
+.bt.w2{grid-column:span 2}
+.bt h3{font:650 15.5px var(--sans);color:#fff}
+.bt p.sub{font-size:13.5px;color:var(--mut);margin-top:2px}
+.big{font:800 46px/1 var(--disp);letter-spacing:-.02em;color:#fff}
+.big small{font-size:.48em;font-weight:700;color:var(--ink2);letter-spacing:0;margin-left:4px}
+.bt .lbl{margin-top:10px;font-size:14.5px;color:var(--ink2);line-height:1.4}
+.bars{margin-top:18px;display:grid;gap:10px}
+.br{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:center;font:600 13px var(--mono);color:var(--ink2)}
+.br .tr{position:relative;height:22px}
+.br .tr i{position:absolute;left:0;top:0;bottom:0;width:calc(var(--v)/155*74%);border-radius:0 5px 5px 0;background:linear-gradient(90deg,rgba(34,211,238,.35),#22d3ee);transform-origin:left;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.js .bt:not(.in) .tr i{transform:scaleX(0)}
+.br .tr em{position:absolute;top:50%;transform:translateY(-50%);left:calc(var(--v)/155*74% + 10px);font:700 14px var(--sans);font-style:normal;color:#fff;white-space:nowrap}
+.stk{display:flex;gap:2px;height:26px;margin-top:20px;border-radius:6px;overflow:hidden}
+.stk i{display:block;height:100%}
+.lg{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:13.5px;color:var(--ink2)}
+.lg span{display:inline-flex;align-items:center;gap:8px}
+.lg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.lg b{color:#fff}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cd{padding:22px;transition:transform .3s,border-color .3s}
+.cd:hover{transform:translateY(-3px);border-color:var(--line2)}
+.ico{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:22px;background:linear-gradient(135deg,rgba(34,211,238,.16),rgba(139,92,246,.16));border:1px solid rgba(126,232,250,.22);margin-bottom:14px}
+.cd h3{font:700 17px var(--sans);color:#fff}
+.cd p{margin-top:6px;font-size:14.3px;color:var(--ink2);line-height:1.55}
+.cd>.k{display:inline-block;margin-top:12px;font-size:12px;line-height:1.55}
+p .k,h3 .k,li>.k{padding:0 .4em;line-height:1.4}
+
+/* incidents */
+.inc-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px}
+.is{padding:16px 18px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.is b{display:block;font:800 30px/1 var(--disp);color:#fff;font-variant-numeric:tabular-nums}
+.is span{display:block;font-size:13px;color:var(--mut);margin-top:6px;line-height:1.35}
+.is.hot b{color:#fda4af}
+.inc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ic{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.ic-h{display:flex;align-items:center;gap:10px;padding:16px 20px 0}
+.ic-n{font:700 11px var(--mono);color:var(--mut);letter-spacing:.1em}
+.ic-h h3{font:700 17px var(--sans);color:#fff}
+.ic-f{margin-left:auto;font:600 11px var(--mono);padding:3px 8px;border-radius:999px;color:#fecdd3;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.3);white-space:nowrap}
+.ic-b,.ic-x{padding:12px 20px 16px;font-size:14px;line-height:1.55}
+.ic-b{color:var(--ink2)}
+.ic-x{margin-top:auto;border-top:1px solid var(--line);background:linear-gradient(180deg,rgba(52,211,153,.07),rgba(52,211,153,.02));color:#d1fae5}
+.lab{display:block;font:700 10.5px var(--mono);letter-spacing:.16em;margin-bottom:4px}
+.ic-b .lab{color:#fda4af}.ic-x .lab{color:#6ee7b7}
+
+/* always-on */
+.hw{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.hw span{font:600 12.5px var(--mono);padding:6px 11px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);background:rgba(255,255,255,.03)}
+.boot{padding:28px 28px 26px}
+.boot-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:26px}
+.boot-h>div:first-child{flex:1 1 480px;max-width:760px}
+.boot-h h3{font:750 22px var(--disp);color:#fff;letter-spacing:-.01em}
+.boot-h p{color:var(--mut);font-size:14px;margin-top:4px}
+.ready{display:flex;align-items:baseline;gap:10px;padding:12px 18px;border-radius:16px;background:linear-gradient(135deg,rgba(52,211,153,.14),rgba(34,211,238,.08));border:1px solid rgba(52,211,153,.35)}
+.ready b{font:800 44px/1 var(--disp);color:#fff;letter-spacing:-.02em}
+.ready span{font-size:14px;color:#a7f3d0;line-height:1.3}
+.track{list-style:none;position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding-top:26px}
+.track::before,.track::after{content:"";position:absolute;top:49px;height:2px;border-radius:2px}
+.track::before{left:8.4%;right:75%;background:repeating-linear-gradient(90deg,rgba(251,191,36,.7) 0 6px,transparent 6px 12px)}
+.track::after{left:25%;right:8.4%;background:linear-gradient(90deg,var(--vi),var(--cy),var(--gr));transform-origin:left;transform:scaleX(1);box-shadow:0 0 12px rgba(34,211,238,.6)}
+.track .pre{color:var(--mut)}
+.track .pre .bd{border-style:dashed}
+.boot.in .track .pre .bd{box-shadow:none;background:rgba(251,191,36,.06)}
+.t0{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font:700 10.5px var(--mono);letter-spacing:.12em;color:#c4b5fd;white-space:nowrap;padding:2px 8px;border-radius:6px;background:rgba(139,92,246,.14);border:1px solid rgba(167,139,250,.35)}
+.inst{margin-top:14px;font-size:13.5px;color:var(--mut);line-height:1.55}
+.inst b{color:var(--ink2)}
+.inst .k{white-space:nowrap}
+.tp{display:inline-block;margin-left:8px;font:600 10px var(--mono);letter-spacing:.06em;color:#fcd34d;padding:1px 6px;border-radius:5px;border:1px solid rgba(251,191,36,.35);vertical-align:1px}
+tr.own td{opacity:.86}
+.js .boot:not(.in) .track::after{transform:scaleX(0)}
+.boot.in .track::after{transition:transform 3.2s cubic-bezier(.4,.1,.3,1) .2s}
+.track li{position:relative;text-align:center;font-size:13px;color:var(--ink2);line-height:1.4;padding:0 2px}
+.bd{position:relative;z-index:1;display:grid;place-items:center;width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:#0b1122;border:1.5px solid var(--line2);font-size:20px;transition:border-color .4s,box-shadow .4s,background .4s}
+.boot.in .bd{border-color:var(--bc,#7ee8fa);box-shadow:0 0 18px -2px var(--bc,#7ee8fa);background:#101a33;transition-delay:calc(.2s + var(--i)*.45s)}
+.track b{display:block;color:#fff;font-size:14px;margin-bottom:4px}
+.track .k{display:inline-block;font-size:11px;margin:2px 0 4px}
+.gantt{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.gantt h4{font:600 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin-bottom:12px}
+.gr{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;margin:7px 0;font-size:13.5px;color:var(--ink2)}
+.gr .tr{position:relative;height:20px;border-radius:5px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 1px,transparent 1px 15%)}
+.gr .tr i{position:absolute;top:3px;bottom:3px;left:var(--s);right:0;border-radius:4px;background:linear-gradient(90deg,var(--gc),color-mix(in srgb,var(--gc) 20%,transparent));transform-origin:left;transition:transform 1.4s cubic-bezier(.2,.8,.2,1) .4s}
+.js .boot:not(.in) .gr .tr i{transform:scaleX(0)}
+.gr .tr em{position:absolute;top:50%;transform:translate(-50%,-50%);left:var(--s);font:700 10.5px var(--mono);font-style:normal;color:#06111c;background:#fff;padding:1px 6px;border-radius:6px;white-space:nowrap}
+.gax{display:grid;grid-template-columns:150px 1fr;gap:14px;font:500 11px var(--mono);color:var(--mut)}
+.gax div{position:relative;height:16px}
+.gax div span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.gax div span:first-child{transform:none}
+.pcgrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr);gap:14px;margin-top:14px}
+.dialc{padding:24px;display:flex;flex-direction:column;gap:16px}
+.dialc h3,.tasks h3,.pc h3{font:700 17px var(--sans);color:#fff}
+#dial{width:100%;max-width:330px;margin:0 auto}
+#dial text{font-family:var(--mono)}
+.dleg{list-style:none;display:grid;gap:8px;font-size:13.5px;color:var(--ink2);line-height:1.4}
+.dleg li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.dleg i{width:12px;height:12px;border-radius:4px;margin-top:4px}
+.tasks{padding:24px}
+.tasks p.sub{font-size:13.5px;color:var(--mut);margin:4px 0 14px}
+table{width:100%;border-collapse:collapse;font-size:13.8px}
+th{text-align:left;font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);padding:8px 10px;border-bottom:1px solid var(--line2)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2);line-height:1.5}
+td:first-child{font:600 12.8px var(--mono);color:#fff;white-space:nowrap}
+td:nth-child(2){color:var(--cy2);font:500 12.8px var(--mono);min-width:118px}
+tr:last-child td{border-bottom:0}
+.pcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.pc{padding:22px}
+.pc .ico{width:40px;height:40px;font-size:19px;margin-bottom:12px}
+.pc p{font-size:14px;color:var(--ink2);margin-top:6px;line-height:1.55}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chips .k{font-size:11.5px}
+.note{margin-top:10px;font-size:13px;color:var(--mut);line-height:1.5}
+
+/* wedge */
+.wedge{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wg{padding:24px}
+.wg h3{display:flex;align-items:center;gap:10px;font:700 18px var(--sans);color:#fff}
+.wg ul{list-style:none;margin-top:16px;display:grid;gap:10px}
+.wg li{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;padding:10px 14px;border-radius:12px;background:rgba(0,0,0,.22);border:1px solid var(--line);font-size:14px;color:var(--ink2);min-height:52px}
+.wg li .k{justify-self:start;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.sp{width:100%;max-width:220px;height:30px}
+.sp path{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.alive .sp path{stroke:#34d399;stroke-dasharray:260;stroke-dashoffset:260;animation:grow 4s ease-in-out infinite}
+.stuck .sp path{stroke:#fb7185}
+@keyframes grow{60%,100%{stroke-dashoffset:0}}
+.ok,.no{display:inline-flex;align-items:center;gap:8px;font:600 13px var(--mono)}
+.ok{color:#6ee7b7}.no{color:#fda4af}
+.ok::before,.no::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}
+.polls{display:flex;gap:5px;align-items:center;font:500 11.5px var(--mono);color:var(--mut)}
+.polls i{width:8px;height:8px;border-radius:2px;background:#fb7185;opacity:.85}
+.vd2{margin-top:16px;padding:12px 16px;border-radius:12px;font-weight:650;font-size:15px}
+.alive .vd2{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);color:#a7f3d0}
+.stuck .vd2{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3);color:#fecdd3}
+.rule{margin-top:16px;padding:18px 22px;text-align:center;font-size:15.5px;color:var(--ink2);line-height:1.6}
+.rule b{color:#fff}
+
+/* lessons */
+.les{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:l}
+.le{padding:22px 22px 20px;position:relative;overflow:hidden}
+.le::before{counter-increment:l;content:counter(l,decimal-leading-zero);display:block;font:800 34px/1 var(--disp);background:linear-gradient(135deg,var(--cy2),var(--vi2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px;opacity:.95}
+.le h3{font:700 16.5px/1.35 var(--sans);color:#fff}
+.le p{margin-top:6px;font-size:14px;color:var(--ink2);line-height:1.55}
+.le.wide{grid-column:span 2;background:radial-gradient(80% 120% at 100% 0%,rgba(34,211,238,.1),transparent 60%),linear-gradient(180deg,rgba(24,32,58,.55),rgba(11,16,31,.55))}
+.pr{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pr span{font:500 12px var(--mono);padding:6px 10px;border-radius:9px;color:var(--ink2);background:rgba(0,0,0,.3);border:1px solid var(--line)}
+.pr b{font-weight:700}.pr-in b{color:#fcd34d}.pr-out b{color:#6ee7b7}
+
+/* whisper */
+.wsp{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:14px;align-items:stretch}
+.priv{padding:28px;display:flex;flex-direction:column;gap:14px;background:radial-gradient(90% 70% at 0% 0%,rgba(244,114,182,.13),transparent 60%),linear-gradient(180deg,rgba(24,32,58,.55),rgba(11,16,31,.55))}
+.priv .lock{display:flex;align-items:center;gap:14px;text-align:left;margin:0}
+.priv .lock .ico{margin:0;width:52px;height:52px;font-size:26px;background:linear-gradient(135deg,rgba(244,114,182,.2),rgba(139,92,246,.2));border-color:rgba(244,114,182,.35)}
+.priv h3{font:800 26px/1.15 var(--disp);color:#fff;letter-spacing:-.01em}
+.priv p{font-size:14.5px;color:var(--ink2);line-height:1.6}
+.warn{padding:14px 16px;border-radius:14px;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);font-size:13.8px;color:#fde68a;line-height:1.55}
+.bench{padding:24px}
+.bench h3{font:700 17px var(--sans);color:#fff}
+.bench p.sub{font-size:13.5px;color:var(--mut);margin:4px 0 12px}
+.bench td{vertical-align:middle}
+.bench td:first-child{white-space:normal}
+.bench td:nth-child(2){color:var(--ink2);white-space:nowrap}
+.bench td:nth-child(3),.bench td:nth-child(4){font:500 12.8px var(--mono);color:var(--ink2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.bench tr.def td{background:rgba(34,211,238,.06)}
+.bench tr.def td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
+.dm{display:inline-block;margin-left:6px;font:700 10px var(--mono);letter-spacing:.08em;color:#06111c;background:var(--cy2);padding:1px 6px;border-radius:5px;vertical-align:1px}
+.rb{position:relative;height:16px;min-width:150px;margin-top:6px;border-radius:4px;background:rgba(255,255,255,.04)}
+.rb i{position:absolute;top:3px;bottom:3px;left:0;width:calc(var(--b)/130*100%);border-radius:0 4px 4px 0;background:linear-gradient(90deg,rgba(148,163,184,.22) calc(var(--a)/var(--b)*100%),#94a3b8 0)}
+.def .rb i{background:linear-gradient(90deg,rgba(34,211,238,.28) calc(var(--a)/var(--b)*100%),#22d3ee 0);box-shadow:0 0 12px rgba(34,211,238,.45)}
+.slow .rb i{background:linear-gradient(90deg,rgba(251,113,133,.22) calc(var(--a)/var(--b)*100%),#fb7185 0)}
+.rb::after{content:"";position:absolute;top:-3px;bottom:-3px;left:calc(90/130*100%);width:1.5px;background:var(--am);opacity:.85}
+.rbl{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--mut)}
+.rbl b{color:#fcd34d;font-weight:600}
+.wrule{margin-top:14px;font-size:13.5px;color:var(--ink2)}
+
+/* start */
+.steps{list-style:none;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;max-width:980px;margin:0 auto;counter-reset:s}
+.sp2{display:grid;grid-template-columns:48px minmax(0,1fr);gap:18px;padding:20px 22px;align-items:start}
+.sp2::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:40px;height:40px;border-radius:12px;font:800 17px var(--mono);color:#06111c;background:linear-gradient(135deg,#a5f3fc,#a78bfa)}
+.sp2 h3{font:700 16.5px var(--sans);color:#fff}
+.sp2 p{font-size:14.3px;color:var(--ink2);margin-top:4px}
+.cb{position:relative;display:flex;align-items:flex-start;gap:10px;margin-top:10px;padding:11px 12px 11px 16px;border-radius:12px;background:#050913;border:1px solid var(--line);font:500 13.5px var(--mono);color:#d7f9ff;overflow:hidden}
+.cb::before{content:"$";color:var(--gr);flex:none;line-height:1.5}
+@media (min-width:641px){.cb .nw{white-space:nowrap}}
+.cb.ps::before{content:"PS>";color:var(--tg)}
+.cb.cl::before{content:"claude ›";color:var(--vi2)}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px}
+.badges span{display:inline-flex;align-items:center;gap:8px;font:600 12.5px var(--mono);padding:6px 12px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.03);color:var(--ink2)}
+.badges span i{width:8px;height:8px;border-radius:50%;background:var(--gr);box-shadow:0 0 8px var(--gr)}
+.cb code{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.cb code::-webkit-scrollbar{display:none}
+.cp{flex:none;align-self:center;font:600 11.5px var(--sans);padding:5px 10px;border-radius:8px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--ink2);cursor:pointer}
+.cp:hover{color:#fff;background:rgba(255,255,255,.1)}
+.more{text-align:center;margin-top:30px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:44px 0 56px;color:var(--mut);font-size:14px}
+.fin{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 30px;align-items:center}
+.fin a{color:var(--ink2);text-decoration:none}
+.fin a:hover{color:#fff}
+.fin p.l2{flex-basis:100%;color:var(--mut);font-size:13.5px}
+
+/* responsive */
+@media (max-width:1100px){
+.nav nav a:nth-child(n+5){display:none}
+.ch2,.ch4{display:none}
+.cards{grid-template-columns:repeat(2,1fr)}
+.fmain{grid-template-columns:minmax(0,1fr) 300px}
+.inc-strip{grid-template-columns:repeat(6,1fr)}
+.inc-strip .is{grid-column:span 2}
+.inc-strip .is:nth-child(n+4){grid-column:span 3}
+.les{grid-template-columns:repeat(2,1fr)}
+.track{grid-template-columns:repeat(3,1fr);row-gap:30px}
+.track::before,.track::after{display:none}
+.pcgrid{grid-template-columns:minmax(0,1fr)}
+.dialc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center}
+.dialc h3{grid-column:1/-1}
+.pcards{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:980px){
+.hero-in{grid-template-columns:minmax(0,1fr)}
+.hv{height:540px;margin-top:10px}
+.ch2,.ch4{display:flex}
+.trails{display:none}
+.stats{grid-template-columns:repeat(2,1fr)}
+.inc{grid-template-columns:repeat(2,1fr)}
+.wsp{grid-template-columns:minmax(0,1fr)}
+.bento{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:860px){
+.nav nav{display:none}
+.gh-sm{margin-left:auto}
+.fmain{grid-template-columns:minmax(0,1fr)}
+.ph{height:600px}
+.wedge{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+.wrap{width:calc(100% - 32px)}
+.hero{padding-top:34px}
+.hv{height:500px;transform:scale(.9);margin:-20px 0 -26px}
+.chip,.trail.v{display:none}
+.cta{flex-direction:column}
+.cta .btn{width:100%}
+.tabs{display:grid;grid-template-columns:1fr 1fr}
+.tab{padding:9px 8px}
+.bench{padding:18px 14px}
+.bench table{font-size:12.5px}
+.bench th,.bench td{padding:8px 5px}
+.bench td:nth-child(3),.bench td:nth-child(4){font-size:11.5px}
+.bench td:nth-child(4){white-space:normal}
+.rb{min-width:70px}
+.dm{display:block;width:max-content;margin:3px 0 0}
+.bench td:first-child{font-size:11.5px}
+.bench td:first-child>span:first-child{display:block}
+.eye{letter-spacing:.12em;font-size:11.5px}
+.rbl{flex-direction:column;gap:2px}
+.st{padding:16px}
+.st span{font-size:13px}
+.flow{padding:6px;border-radius:20px}
+#flow>.wrap{width:calc(100% - 16px)}
+.fbar{flex-direction:column;align-items:stretch}
+.ctrls{justify-content:center}
+.dia{padding:2px}
+.cap{grid-template-columns:minmax(0,1fr);padding:14px}
+.cap-c{grid-column:auto}
+.cap-t{grid-row:auto;display:flex;align-items:baseline;gap:10px;font-size:18px}
+.cap-t small{margin:0}
+.cards,.inc,.les,.pcards,.bento{grid-template-columns:minmax(0,1fr)}
+.bt.w2,.le.wide{grid-column:auto}
+.inc-strip{grid-template-columns:repeat(2,1fr)}
+.inc-strip .is,.inc-strip .is:nth-child(n+4){grid-column:auto}
+.inc-strip .is:last-child{grid-column:span 2}
+.track{grid-template-columns:1fr 1fr}
+.dialc{display:flex}
+.gr,.gax{grid-template-columns:96px 1fr;font-size:12.5px}
+.tasks{padding:18px}
+.tasks table,.tasks tbody,.tasks tr,.tasks td{display:block}
+.tasks thead{display:none}
+.tasks tr{padding:12px 0;border-bottom:1px solid var(--line)}
+.tasks td{border:0;padding:2px 0;white-space:normal!important}
+.wg li{grid-template-columns:1fr;gap:6px}
+.sp2{grid-template-columns:minmax(0,1fr);gap:12px;padding:18px 16px}
+.cb{font-size:12.3px;padding:10px 10px 10px 12px;gap:8px}
+.cb code{overflow-wrap:break-word}
+.boot{padding:20px}
+.ready b{font-size:36px}
+}
+@media (prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+*,*::before,*::after{animation:none!important;transition:none!important}
+.js .rv:not(.in){opacity:1;transform:none}
+.trail{display:none}
+.alive .sp path{stroke-dashoffset:0}
+.js .bt:not(.in) .tr i,.js .boot:not(.in) .gr .tr i,.js .boot:not(.in) .track::after{transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#flow">Skip to the message flow</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="lgm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7ee8fa"/><stop offset="1" stop-color="#a78bfa"/></linearGradient>
+<symbol id="mk" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12.5" fill="none" stroke="url(#lgm)" stroke-width="2.4" stroke-dasharray="13.6 6" stroke-linecap="round"/><circle cx="16" cy="16" r="6.6" fill="none" stroke="url(#lgm)" stroke-width="1.6" opacity=".75"/><circle cx="16" cy="16" r="2.9" fill="#ecfeff"/></symbol>
+<symbol id="mkw" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="#fff" stroke-width="2.6" stroke-dasharray="11.8 5.5" stroke-linecap="round"/><circle cx="16" cy="16" r="3.6" fill="#fff"/></symbol>
+<symbol id="gh" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
+</defs>
+</svg>
+
+<header class="nav">
+<div class="wrap nav-in">
+<a class="brand" href="#top" aria-label="Jarvis, back to top"><svg aria-hidden="true"><use href="#mk"/></svg>JARVIS</a>
+<nav aria-label="Sections"><a href="#flow">Flow</a><a href="#hood">Under the hood</a><a href="#heal">Self-healing</a><a href="#pc">Always-on PC</a><a href="#lessons">Lessons</a><a href="#start">Quick start</a></nav>
+<a class="gh-sm" href="https://github.com/PepeMilanese/Jarvis"><svg aria-hidden="true"><use href="#gh"/></svg>GitHub</a>
+</div>
+</header>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero" aria-labelledby="h1">
+<div class="hbg" aria-hidden="true">
+<div class="grid"></div><i class="orb o1"></i><i class="orb o2"></i>
+<div class="trails"><span class="trail" style="--r:2;--d:9s;--dl:-2s;--c:#22d3ee"></span>
+<span class="trail" style="--r:5;--d:12s;--dl:-7s;--c:#a78bfa"></span>
+<span class="trail" style="--r:8;--d:10s;--dl:-4s;--c:#fbbf24"></span>
+<span class="trail v" style="--x:21;--d:13s;--dl:-8s;--c:#a78bfa"></span></div>
+</div>
+<div class="wrap hero-in">
+<div>
+<p class="pill"><span class="live" aria-hidden="true"></span>Open source · Claude Code + Telegram · MIT</p>
+<h1 id="h1"><span class="wm">JARVIS</span><span class="tagl">Run an AI dev team <br>from your phone.</span></h1>
+<p class="lead">Text or voice-memo a task in Telegram; a headless Claude Code dispatcher on an always-on PC hands it to up to three parallel worker sessions and sends every milestone — and the proof — back to your phone.</p>
+<div class="cta">
+<a class="btn btn-p" href="https://github.com/PepeMilanese/Jarvis"><svg aria-hidden="true"><use href="#gh"/></svg>View on GitHub</a>
+<a class="btn btn-g" href="#flowBox" id="watch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch a message travel</a>
+</div>
+</div>
+<div class="hv" aria-hidden="true">
+<svg class="rings" viewBox="0 0 560 560">
+<defs><radialGradient id="hgl"><stop offset="0" stop-color="#22d3ee" stop-opacity=".2"/><stop offset=".55" stop-color="#8b5cf6" stop-opacity=".09"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></radialGradient></defs>
+<circle cx="280" cy="280" r="276" fill="url(#hgl)"/>
+<g class="r1"><circle cx="280" cy="280" r="262" fill="none" stroke="rgba(126,232,250,.22)" stroke-dasharray="2 9"/></g>
+<g class="r2"><circle cx="280" cy="280" r="222" fill="none" stroke="url(#lgm)" stroke-width="2" stroke-dasharray="150 40 36 50 90 60" opacity=".55"/></g>
+<g class="r3"><circle cx="280" cy="280" r="182" fill="none" stroke="rgba(167,139,250,.22)"/><circle cx="462" cy="280" r="5" fill="#22d3ee"/><circle cx="189" cy="122.4" r="5" fill="#34d399"/><circle cx="189" cy="437.6" r="5" fill="#64748b"/></g>
+</svg>
+<div class="hp"><div class="hp-scr">
+<div class="isl"></div>
+<div class="sbar"><span>07:00</span><span style="display:flex;align-items:center"><span class="sig"><i></i><i></i><i></i><i></i></span><span class="bat"><b></b></span></span></div>
+<div class="lock"><small>Tuesday</small><span>07:00</span></div>
+<div class="stack" id="stack"></div>
+<div class="hbar"></div>
+</div></div>
+<div class="chip ch1"><i class="d run"></i>SLOT 1 · <b>running</b></div>
+<div class="chip ch2"><i class="d run"></i>SLOT 2 · <b>running</b></div>
+<div class="chip ch3"><i class="d"></i>SLOT 3 · <b>free</b></div>
+<div class="chip ch4"><i class="d ok"></i>WHISPER · <b>offline</b></div>
+</div>
+</div>
+<div class="wrap">
+<ul class="stats">
+<li class="st glass" style="--sc:#22d3ee"><b class="cnt" data-to="283">283</b><span>worker jobs launched from the phone</span></li>
+<li class="st glass" style="--sc:#a78bfa"><b class="cnt" data-to="320">320</b><span>worker-hours of Claude Code sessions</span></li>
+<li class="st glass" style="--sc:#34d399"><b class="cnt" data-to="60">60</b><span>pull requests merged by workers</span></li>
+<li class="st glass" style="--sc:#fbbf24"><b class="cnt" data-to="92" data-suf="%">92%</b><span>of runs finished with a clean summary</span></li>
+</ul>
+<p class="snote">Production ledgers · 10 Sep → 19 Oct 2026 · up to 3 worker slots in parallel</p>
+</div>
+</section>
+
+<!-- FLOW -->
+<section class="sec" id="flow" aria-labelledby="flow-h">
+<div class="wrap">
+<header class="sh c rv">
+<p class="eye">How it works</p>
+<h2 id="flow-h">The flow of <span class="g">one message</span></h2>
+<p>Follow a single Telegram message from your thumb to a worker slot and back. Every hop is real; the timings are illustrative.</p>
+</header>
+<div class="flow glass rv" id="flowBox">
+<div class="fbar">
+<div class="tabs" role="tablist" aria-label="Scenario">
+<button class="tab" role="tab" id="tab0" aria-selected="true" aria-controls="fpanel" tabindex="0">💬 Text message</button>
+<button class="tab" role="tab" id="tab1" aria-selected="false" aria-controls="fpanel" tabindex="-1">🎤 Voice memo</button>
+<button class="tab" role="tab" id="tab2" aria-selected="false" aria-controls="fpanel" tabindex="-1">⏰ Scheduled</button>
+<button class="tab" role="tab" id="tab3" aria-selected="false" aria-controls="fpanel" tabindex="-1">❓ Question</button>
+</div>
+<div class="ctrls">
+<button class="ib" id="bPrev" type="button" aria-label="Previous step"><svg viewBox="0 0 24 24"><path d="M6 5h2.2v14H6zM19 5.3v13.4L9.5 12z"/></svg></button>
+<button class="ib pl" id="bPlay" type="button" aria-label="Play"><svg class="i-pl" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg><svg class="i-pa" viewBox="0 0 24 24"><path d="M7 5h3.6v14H7zm6.4 0H17v14h-3.6z"/></svg></button>
+<button class="ib" id="bNext" type="button" aria-label="Next step"><svg viewBox="0 0 24 24"><path d="M15.8 5H18v14h-2.2zM5 5.3v13.4L14.5 12z"/></svg></button>
+<button class="ib" id="bReplay" type="button" aria-label="Replay this scenario"><svg viewBox="0 0 24 24"><path d="M12 5a7 7 0 1 1-6.6 9.3l2-.7A4.9 4.9 0 1 0 12 7.1V10L7.5 6 12 2z"/></svg></button>
+</div>
+</div>
+<div class="fmain" id="fpanel" role="tabpanel" aria-labelledby="tab0">
+<div class="dcol">
+<div class="dia" id="dia"></div>
+<div class="cap" id="cap">
+<div class="cap-t" id="capT"><small>TIME</small>0.0 s</div>
+<div class="cap-w"><b id="capW">Phone</b><span id="capN">1 / 14</span></div>
+<p class="cap-d" id="capD">You type a task into the Jarvis chat on Telegram.</p>
+<code class="k cap-c" id="capC" style="visibility:hidden">·</code>
+<ol class="tl" id="tl" aria-label="Steps"></ol>
+<div class="prog" aria-hidden="true"><i id="prog"></i></div>
+</div>
+</div>
+<div class="pcol">
+<div class="ph" role="log" aria-live="off" aria-label="Simulated Telegram chat with the Jarvis bot">
+<div class="scr">
+<div class="isl"></div>
+<div class="sbar"><span id="ptime">10:02</span><span style="display:flex;align-items:center"><span class="sig"><i></i><i></i><i></i><i></i></span><span class="bat"><b></b></span></span></div>
+<div class="tgh"><span class="bk" aria-hidden="true">‹</span><span class="av"><svg aria-hidden="true"><use href="#mkw"/></svg></span><span class="tgn"><b>Jarvis</b><span id="tgs">bot</span></span></div>
+<div class="chat" id="chat"></div>
+<div class="inp" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16.5 6.5 8.6 14.4a1.5 1.5 0 0 0 2.1 2.1l7.4-7.4a3.5 3.5 0 0 0-5-5L5.6 11.6a5.5 5.5 0 0 0 7.8 7.8l6.3-6.3-1.4-1.4-6.3 6.3a3.5 3.5 0 0 1-5-5l7.5-7.5a1.5 1.5 0 0 1 2.1 2.1l-7.4 7.4-.7-.7 7.9-7.9z"/></svg><span>Message</span><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V22h2v-3.1a7 7 0 0 0 6-6.9z"/></svg></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="vtitle rv">The phone vocabulary</p>
+<div class="vocab rv" aria-label="Message prefixes sent to the phone">
+<span>🚀 started</span><span>🌿 branch pushed</span><span>📬 PR opened</span><span>🧐 reviewer verdict</span><span>🔁 fix round</span><span>🟢 CI green</span><span>✅ done / merged</span><span>❓ needs your call</span><span>⏱ timeout</span><span>❌ failed</span><span>🛑 stopped</span><span>🎤 I heard</span><span>⏰ scheduled</span><span>📊 quota</span>
+</div>
+</div>
+</section>
+
+<!-- NUMBERS -->
+<section class="sec" id="numbers" aria-labelledby="num-h" style="padding-top:20px">
+<div class="wrap">
+<header class="sh rv">
+<p class="eye">Forty days in production</p>
+<h2 id="num-h">Real numbers, <span class="g">not a demo</span></h2>
+<p>Straight from the ledgers, first job 10 Sep 2026 to 19 Oct 2026 — one phone, one PC, three slots.</p>
+</header>
+<div class="bento">
+<div class="bt w2 glass rv">
+<h3>300 runs across three slots</h3>
+<p class="sub">283 jobs from the phone; a resumed job counts as an extra run</p>
+<div class="bars">
+<div class="br" title="Slot 1: 155 runs"><span>slot 1</span><div class="tr"><i style="--v:155"></i><em style="--v:155">155 runs</em></div></div>
+<div class="br" title="Slot 2: 90 runs"><span>slot 2</span><div class="tr"><i style="--v:90"></i><em style="--v:90">90 runs</em></div></div>
+<div class="br" title="Slot 3: 55 runs"><span>slot 3</span><div class="tr"><i style="--v:55"></i><em style="--v:55">55 runs</em></div></div>
+</div>
+</div>
+<div class="bt w2 glass rv">
+<h3>What the runs were</h3>
+<p class="sub">275 of 300 ended <span class="k">done</span>; 17 stopped to ask and were resumed from the phone</p>
+<div class="stk" role="img" aria-label="203 general jobs and 97 repo jobs"><i style="width:67.67%;background:#22d3ee" title="203 general jobs"></i><i style="flex:1;background:#a78bfa" title="97 repo jobs"></i></div>
+<div class="lg"><span><i style="background:#22d3ee"></i><b>203</b> general jobs — scratch or a named folder</span><span><i style="background:#a78bfa"></i><b>97</b> repo jobs — own worktree + pull request</span></div>
+</div>
+<div class="bt glass rv"><div class="big">33</div><p class="lbl">jobs on the busiest day</p></div>
+<div class="bt glass rv"><div class="big">~36<small>h</small></div><p class="lbl">longest single job — no time cap killed it</p></div>
+<div class="bt glass rv"><div class="big">~960</div><p class="lbl">replies sent to ~370 acknowledged phone messages</p></div>
+<div class="bt glass rv"><div class="big">155</div><p class="lbl">PRs merged counting a separate nightly automation (not in this repo)</p></div>
+</div>
+</div>
+</section>
+
+<!-- UNDER THE HOOD -->
+<section class="sec" id="hood" aria-labelledby="hood-h">
+<div class="wrap">
+<header class="sh rv">
+<p class="eye">Under the hood</p>
+<h2 id="hood-h">Small parts, <span class="g">sharp contracts</span></h2>
+<p>A stdlib-only Python supervisor, one long-lived Claude Code session that triages, and short-lived workers that do the real work — each piece with one job.</p>
+</header>
+<div class="cards">
+<article class="cd glass rv"><div class="ico" aria-hidden="true">🧭</div><h3>Supervisor</h3><p>Python, stdlib only. Runs the dispatcher as <code class="k">claude -p</code> with stream-json in and out and stdin held open forever; logs every event and restarts it.</p><code class="k">python -m jarvis dispatcher</code></article>
+<article class="cd glass rv"><div class="ico" aria-hidden="true">🧠</div><h3>Dispatcher</h3><p>A long-lived headless Claude Code session with an operating manual on its system prompt. Small questions it answers itself; anything that changes state or takes over a minute becomes a worker job.</p><code class="k">manual/DISPATCHER.md</code></article>
+<article class="cd glass rv"><div class="ico" aria-hidden="true">⌨️</div><h3>Launcher CLI</h3><p>Picks a free slot (max 3 — a 4th waits until a slot frees), writes a brief, launches a detached watchdog and returns one JSON line in seconds.</p><code class="k">start · status · answer · stop · result · cleanup · quota</code></article>
+<article class="cd glass rv"><div class="ico" aria-hidden="true">🛡️</div><h3>Watchdog</h3><p>One per running slot. Owns the worker, snapshots its process tree every 15 s, reaps leftovers, classifies the outcome, writes the ledger and frees the slot.</p><code class="k">jobs/s1.json … s3.json</code></article>
+<article class="cd glass rv"><div class="ico" aria-hidden="true">📜</div><h3>Worker contract</h3><p>One turn, foreground only, ask before anything irreversible — and finish with a summary or a question block that carries a <code class="k">proof:</code> line.</p><code class="k">JARVIS-SUMMARY · JARVIS-QUESTION</code></article>
+<article class="cd glass rv"><div class="ico" aria-hidden="true">⏰</div><h3>Durable schedule</h3><p>One-shots, intervals, cron and the built-in watch entry in one file. Fires only between turns and survives restarts.</p><code class="k">--at 02:00 · --in 90m · --every 30m · --cron "30 7 * * 1-5"</code></article>
+<article class="cd glass rv"><div class="ico" aria-hidden="true">🎙️</div><h3>Offline Whisper</h3><p>faster-whisper (CTranslate2, CPU, int8) with large-v3-turbo, ~1.6 GB in its own venv. No speech-to-text service ever hears the audio.</p><code class="k">python -m jarvis stt &lt;file&gt;</code></article>
+<article class="cd glass rv"><div class="ico" aria-hidden="true">📊</div><h3>Quota readout</h3><p>The Claude subscription's 5-hour and weekly windows — % used and reset time — degrading to one honest line, never a stack trace.</p><code class="k">python -m jarvis quota</code></article>
+</div>
+</div>
+</section>
+
+<!-- SELF-HEALING -->
+<section class="sec" id="heal" aria-labelledby="heal-h">
+<div class="wrap">
+<header class="sh rv">
+<p class="eye">Self-healing</p>
+<h2 id="heal-h">Every guard is <span class="g">a scar</span></h2>
+<p>Each of these broke for real in production. The supervisor now catches it, fixes it, and sends at most one honest line to the phone.</p>
+</header>
+<div class="inc-strip rv">
+<div class="is"><b class="cnt" data-to="53">53</b><span>dispatcher sessions brought up by the supervisor</span></div>
+<div class="is"><b class="cnt" data-to="46">46</b><span>fresh-context restarts — 36 scheduled at 06:45, 10 on demand</span></div>
+<div class="is hot"><b>5×</b><span>poller-gone restarts, fired for real</span></div>
+<div class="is hot"><b>1×</b><span>stolen bot caught and taken back</span></div>
+<div class="is hot"><b>1×</b><span>logged-out outage, one alert, one “back online”</span></div>
+</div>
+<div class="inc">
+<article class="ic glass rv"><div class="ic-h"><span class="ic-n">01</span><h3>Deaf session</h3><span class="ic-f">4 of 4 restarts</span></div>
+<p class="ic-b"><span class="lab">WHAT BROKE</span>The session snapshots its MCP servers at the first message. A kickoff sent before the Telegram poller was up gave a session that never hears a thing — one ignored its owner for 24 h.</p>
+<p class="ic-x"><span class="lab">THE FIX</span>Wait for the poller, settle 3 s, kick off, read the <code class="k">init</code> event; kill and retry (backoff 15 → 300 s) any session whose channel isn't connected with the <code class="k">reply</code> tool.</p></article>
+<article class="ic glass rv"><div class="ic-h"><span class="ic-n">02</span><h3>Poller gone</h3><span class="ic-f">fired 5×</span></div>
+<p class="ic-b"><span class="lab">WHAT BROKE</span>The Telegram poller process vanished while the session lived on — a healthy-looking session that could no longer hear.</p>
+<p class="ic-x"><span class="lab">THE FIX</span>Poller missing for 90 s while the session lives → restart the session.</p></article>
+<article class="ic glass rv"><div class="ic-h"><span class="ic-n">03</span><h3>Stolen bot</h3><span class="ic-f">73 min silent</span></div>
+<p class="ic-b"><span class="lab">WHAT BROKE</span>One <code class="k">getUpdates</code> consumer per token: any other Claude Code session opened in the folder started its own poller and took the bot — behind a green log.</p>
+<p class="ic-x"><span class="lab">THE FIX</span>The poller must be a descendant of <em>this</em> session, re-proven every 5 min (pids get reused); stray pollers are swept before launch.</p></article>
+<article class="ic glass rv"><div class="ic-h"><span class="ic-n">04</span><h3>Logged out</h3><span class="ic-f">1 outage</span></div>
+<p class="ic-b"><span class="lab">WHAT BROKE</span>A refused token refresh wiped the CLI login; every message got a 401 behind a channel that still said “connected”.</p>
+<p class="ic-x"><span class="lab">THE FIX</span>No session starts while <code class="k">claude auth status</code> says logged out; a session answering “Failed to authenticate” is killed; one alert goes straight through the Bot API, then one “back online”.</p></article>
+<article class="ic glass rv"><div class="ic-h"><span class="ic-n">05</span><h3>Process-tree safety</h3><span class="ic-f">pid reuse</span></div>
+<p class="ic-b"><span class="lab">WHAT BROKE</span>Windows parent pids go stale and get reused — one reaper walked from a reused pid into system processes.</p>
+<p class="ic-x"><span class="lab">THE FIX</span>Never <code class="k">taskkill /T</code>. A child must be younger than its parent, and only known tree-process names are ever stopped.</p></article>
+<article class="ic glass rv"><div class="ic-h"><span class="ic-n">06</span><h3>No inherited pipes</h3><span class="ic-f">2 h hang</span></div>
+<p class="ic-b"><span class="lab">WHAT BROKE</span>An inherited handle once hung the dispatcher for two hours, waiting on a launcher that had long finished.</p>
+<p class="ic-x"><span class="lab">THE FIX</span>The watchdog is started fully detached, so the launcher returns in seconds — every time.</p></article>
+</div>
+</div>
+</section>
+
+<!-- ALWAYS-ON PC -->
+<section class="sec" id="pc" aria-labelledby="pc-h">
+<div class="wrap">
+<header class="sh rv">
+<p class="eye">The always-on PC</p>
+<h2 id="pc-h">Reboots, power cuts, forced updates: <span class="g">it comes back on its own.</span></h2>
+<p>One night a Windows Update rebooted the machine at 02:30. Nobody signed in, so nothing session-bound came back — and it sat dead for two days. Since then it comes back on its own, from a power cut to a forced update.</p>
+<div class="hw"><span>small-form-factor office desktop</span><span>6-core i5</span><span>16 GB RAM</span><span>no GPU</span><span>on 24/7</span></div>
+</header>
+
+<div class="boot glass rv">
+<div class="boot-h"><div><h3>Back up on its own, nobody at the keyboard</h3><p>Everything was already up when the boot report checked — 3.2 min after boot, on three unattended restarts. Sign-in itself took about 30 s.</p></div>
+<div class="ready"><b>3.2 min</b><span>after boot: all up when<br>the boot report checked</span></div></div>
+<ol class="track">
+<li class="pre" style="--i:0;--bc:#fbbf24"><span class="bd" aria-hidden="true">🔌</span><b>Power cut? Back on</b><code class="k">After Power Loss: Power On</code>recipe step one — adds the power-cut path</li>
+<li style="--i:1;--bc:#a78bfa"><span class="t0">BOOT · t = 0</span><span class="bd" aria-hidden="true">🪟</span><b>Windows boots clean</b>Fast Startup off <code class="k">HiberbootEnabled = 0</code></li>
+<li style="--i:2;--bc:#a78bfa"><span class="bd" aria-hidden="true">🔐</span><b>Autologon · ~30 s</b>password kept as an encrypted LSA secret</li>
+<li style="--i:3;--bc:#22d3ee"><span class="bd" aria-hidden="true">🔓</span><b>No lock screen</b><code class="k">NoLockScreen = 1</code></li>
+<li style="--i:4;--bc:#22d3ee"><span class="bd" aria-hidden="true">⏱</span><b>Logon tasks fire</b>apps, dispatcher, CI runners, boot report</li>
+<li style="--i:5;--bc:#34d399"><span class="bd" aria-hidden="true">✅</span><b>Checked · 3.2 min</b>after boot — the boot report finds everything already up</li>
+</ol>
+<div class="gantt">
+<h4>After logon — all user-level tasks, launched hidden</h4>
+<div class="gr"><span>Autostart apps</span><div class="tr"><i style="--s:15%;--gc:#fbbf24"></i><em style="--s:15%">+30 s</em></div></div>
+<div class="gr"><span>Jarvis-Dispatcher</span><div class="tr"><i style="--s:22.5%;--gc:#22d3ee"></i><em style="--s:22.5%">+45 s</em></div></div>
+<div class="gr"><span>CI runners ×2</span><div class="tr"><i style="--s:30%;--gc:#a78bfa"></i><em style="--s:30%">+60 s</em></div></div>
+<div class="gr"><span>Jarvis-Boot-Report</span><div class="tr"><i style="--s:90%;--gc:#34d399"></i><em style="--s:90%">+3 min</em></div></div>
+<div class="gax"><span></span><div><span style="left:0">logon</span><span style="left:30%">+1 min</span><span style="left:60%">+2 min</span><span style="left:90%">+3 min</span></div></div>
+</div>
+</div>
+
+<div class="pcgrid">
+<div class="dialc glass rv">
+<h3>A day on the PC</h3>
+<svg id="dial" viewBox="0 0 340 340" role="img" aria-label="24-hour dial: active hours from 23:00 to 17:00, a heal check every 15 minutes, and the daily restart at 06:45"></svg>
+<ul class="dleg">
+<li><i style="background:#22d3ee"></i><span><b style="color:#fff">Active hours 23:00 → 17:00</b> — 18 h, covering the night shift</span></li>
+<li><i style="background:#3b4a63"></i><span>17:00 → 23:00 — and still never an automatic reboot with a user logged on</span></li>
+<li><i style="background:#a78bfa"></i><span><b style="color:#fff">06:45</b> daily restart — a fresh dispatcher context every morning</span></li>
+<li><i style="background:#34d399;border-radius:50%"></i><span>Heal check every 15 min at :05 :20 :35 :50 — never at :45</span></li>
+</ul>
+</div>
+<div class="tasks glass rv">
+<h3>Scheduled tasks</h3>
+<p class="sub">User-level, “run only when logged on”, all launched through a tiny <code class="k">run_hidden.vbs</code> — no console window ever flashes.</p>
+<table>
+<thead><tr><th>Task</th><th>Trigger</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td>Jarvis-Dispatcher</td><td>logon + 45 s</td><td>the supervisor — the task lives exactly as long as it: single instance, no time limit, restart on failure 3×</td></tr>
+<tr><td>Jarvis-Dispatcher-Restart</td><td>daily 06:45</td><td>stop poller and supervisor, restart — a fresh context every morning</td></tr>
+<tr><td>Jarvis-Dispatcher-Heal</td><td>every 15 min at :05 :20 :35 :50</td><td>start the dispatcher if its supervisor is gone, silent otherwise (never at :45 — it once raced the 06:45 restart)</td></tr>
+<tr><td>Jarvis-Boot-Report</td><td>logon + 3 min</td><td>proof of what came up on its own: minutes since boot, clean or unclean shutdown, which processes and settings stuck</td></tr>
+<tr class="own"><td>CI-Runner-1 / -2<span class="tp">this PC</span></td><td>logon + 60 s, every 15 min</td><td>self-hosted GitHub Actions runner loops; a named mutex per slot means a repeat trigger never doubles a loop, and a dead loop is replaced within 15 min</td></tr>
+<tr class="own"><td>Autostart apps<span class="tp">this PC</span></td><td>logon + 30 s</td><td>desktop apps and a terminal session</td></tr>
+</tbody>
+</table>
+<p class="inst">The four <b>Jarvis-*</b> tasks ship with the repo: <code class="k">windows\install-tasks.ps1</code> installs them, <code class="k">windows\always-on\check.ps1</code> audits every always-on setting read-only.</p>
+</div>
+</div>
+
+<div class="pcards">
+<article class="pc glass rv"><div class="ico" aria-hidden="true">🔌</div><h3>Firmware: back after a power cut</h3><p>Step one of the recipe, and the one that adds the power-cut path: “After Power Loss → Power On” — elsewhere “Restore on AC Power Loss”, “AC Back” or “State after G3”. Optional: a BIOS power-on time as a daily backstop.</p><div class="chips"><code class="k">After Power Loss: Power On</code></div></article>
+<article class="pc glass rv"><div class="ico" aria-hidden="true">🔐</div><h3>Sign-in without a human</h3><p>Sysinternals Autologon keeps the password as an encrypted LSA secret — never plaintext in the registry. Change the password, re-run Autologon. A real session, not services: the AI login, Docker, cloud drive and bot poller are all per-user.</p><div class="chips"><code class="k">AutoAdminLogon = 1</code><code class="k">NoLockScreen = 1</code><code class="k">CONSOLELOCK 0</code></div></article>
+<article class="pc glass rv"><div class="ico" aria-hidden="true">🌙</div><h3>Never sleep</h3><p>No standby, no hibernate, monitor stays awake; hibernation and Fast Startup off, so a shutdown is a real one and every boot is clean. Wake timers allowed.</p><div class="chips"><code class="k">powercfg /change standby-timeout-ac 0</code><code class="k">powercfg /change hibernate-timeout-ac 0</code><code class="k">powercfg /change monitor-timeout-ac 0</code><code class="k">powercfg /hibernate off</code><code class="k">HiberbootEnabled = 0</code></div></article>
+<article class="pc glass rv"><div class="ico" aria-hidden="true">🛑</div><h3>Windows Update can't reboot it mid-job</h3><p>Automatic install off by policy, notify only, no auto-reboot with a user logged on, active hours stretched to 23:00 → 17:00. Updates go in by hand about monthly — cheap now that reboots are survivable.</p><div class="chips"><code class="k">NoAutoUpdate = 1</code><code class="k">AUOptions = 2</code><code class="k">NoAutoRebootWithLoggedOnUsers = 1</code></div></article>
+<article class="pc glass rv"><div class="ico" aria-hidden="true">♻️</div><h3>CI runners that recycle</h3><p>Two ephemeral GitHub Actions runners in an isolated WSL2 distro — own Docker, no Windows drive, no interop. Each registration serves one job, then re-registers with a fresh 1-hour token minted on the host; the work folder is wiped before and after.</p><div class="chips"><code class="k">recycle one idle slot at a time</code><code class="k">never wsl --shutdown mid-job</code></div></article>
+<article class="pc glass rv"><div class="ico" aria-hidden="true">🛟</div><h3>Remote safety net</h3><p>Tailscale in unattended mode keeps the PC reachable for remote desktop even with nobody signed in — and a remote logon itself creates the session that starts everything.</p><div class="chips"><code class="k">Tailscale · unattended mode</code></div></article>
+</div>
+</div>
+</section>
+
+<!-- WEDGE -->
+<section class="sec" id="wedge" aria-labelledby="wedge-h">
+<div class="wrap">
+<header class="sh c rv">
+<p class="eye">Wedge detection without timers</p>
+<h2 id="wedge-h">No time cap. No budget cap. <span class="g">Evidence.</span></h2>
+<p>Ceilings only ever killed jobs that were working. The dispatcher is the stop — and it needs three signals to agree.</p>
+</header>
+<div class="wedge">
+<div class="wg alive glass rv">
+<h3><span class="ok" aria-hidden="true"></span>Working — leave it alone</h3>
+<ul>
+<li><span>pid alive</span><span class="ok">yes</span></li>
+<li><span>transcript growing</span><svg class="sp" viewBox="0 0 220 30" aria-label="transcript size rising"><path d="M2 27 L30 25 L52 22 L70 22 L92 17 L118 15 L136 11 L160 10 L182 6 L218 3"/></svg></li>
+<li><span>step line moving</span><code class="k" id="stepTick">step: reading the failing test</code></li>
+</ul>
+<p class="vd2">→ keep going — even at hour 36</p>
+</div>
+<div class="wg stuck glass rv">
+<h3><span class="no" aria-hidden="true"></span>Wedged — stop it</h3>
+<ul>
+<li><span>pid alive</span><span class="ok">yes</span></li>
+<li><span>transcript growing</span><svg class="sp" viewBox="0 0 220 30" aria-label="transcript size flat"><path d="M2 27 L40 22 L70 16 L96 15 L218 15"/></svg></li>
+<li><span>step line moving</span><span class="polls"><code class="k">step: running the suite</code> <i></i><i></i><i></i> unchanged</span></li>
+</ul>
+<p class="vd2">→ wedged across several polls — the dispatcher stops it</p>
+</div>
+</div>
+<p class="rule glass rv"><b>wedged</b> = pid alive <b>AND</b> transcript stopped growing <b>AND</b> step line unchanged across several polls. Elapsed time and cost alone are <b>never</b> evidence.</p>
+</div>
+</section>
+
+<!-- LESSONS -->
+<section class="sec" id="lessons" aria-labelledby="les-h">
+<div class="wrap">
+<header class="sh rv">
+<p class="eye">Lessons learned</p>
+<h2 id="les-h">Eleven lessons, <span class="g">each paid for</span></h2>
+<p>Every one of them comes from a real incident.</p>
+</header>
+<ol class="les">
+<li class="le glass rv"><h3>A session is not a service.</h3><p>Anything per-user needs a real logon — autologon plus logon tasks, not “run as SYSTEM”.</p></li>
+<li class="le glass rv"><h3>Verify the channel, not the process.</h3><p>A live process with a connected-looking plugin can still be deaf.</p></li>
+<li class="le glass rv"><h3>Ownership, not liveness.</h3><p>“Is the poller alive?” is the wrong question when any other session can take the bot.</p></li>
+<li class="le glass rv"><h3>No timers on working jobs.</h3><p>Budget and time ceilings only ever killed jobs that were working. Detect wedges from evidence — a stalled transcript under a live pid.</p></li>
+<li class="le glass rv"><h3>Headless means one turn.</h3><p>A worker that backgrounds a command and ends its turn is dead — foreground only, at most 9 minutes per wait.</p></li>
+<li class="le glass rv"><h3>Write between turns.</h3><p>A message written into a running turn gets merged into it — so the durable schedule fires only when the session is idle.</p></li>
+<li class="le wide glass rv"><h3>Every task carries its own acceptance test.</h3><p><code class="k">proven right by:</code> on the way in, <code class="k">proof:</code> on the way out — evidence that does not rest on the agent's word.</p><div class="pr" aria-hidden="true"><span class="pr-in">→ task · <b>proven right by:</b> the suite passing in CI</span><span class="pr-out">← summary · <b>proof:</b> CI green on the PR head</span></div></li>
+<li class="le glass rv"><h3>Never trust a scraped number.</h3><p>PR numbers read from prose were wrong three times in one morning; only numbers the job itself created are shown as verified.</p></li>
+<li class="le glass rv"><h3>Speech-to-text can invent instructions.</h3><p>A glossary prompt made Whisper append a plausible task nobody said; a forced language silently translates. No glossary — and a <code class="k">heard=</code> warning when the audio was another language.</p></li>
+<li class="le glass rv"><h3>Never <code class="k">taskkill /T</code>.</h3><p>Parent pids go stale. Walk the tree yourself and require a child to be younger than its parent.</p></li>
+<li class="le glass rv"><h3>Fail soft, alert once.</h3><p>The quota readout and the outage alert both degrade to one honest line instead of a stack trace — and the phone gets one alert per outage, not a flood.</p></li>
+</ol>
+</div>
+</section>
+
+<!-- WHISPER -->
+<section class="sec" id="whisper" aria-labelledby="wh-h">
+<div class="wrap">
+<header class="sh rv">
+<p class="eye">Offline Whisper</p>
+<h2 id="wh-h">Talk to it. <span class="g">Transcribed on the PC.</span></h2>
+<p>About 20 voice memos so far, all transcribed on a 6-core CPU with no GPU — then echoed back verbatim before Jarvis acts.</p>
+</header>
+<div class="wsp">
+<div class="priv glass rv">
+<div class="lock"><div class="ico" aria-hidden="true">🔒</div><h3>Local speech-to-text, by design</h3></div>
+<p>Transcribed on the PC — no speech-to-text service ever hears the audio. faster-whisper on CTranslate2, CPU, int8, with the large-v3-turbo model (~1.6 GB) in its own venv. The memo is downloaded, transcribed, echoed as <code class="k">🎤 I heard: …</code> — and the audio file is deleted.</p>
+<p>No confirmation step: Jarvis acts at once, you read the echo while the job already runs, and you say “stop” if it misheard.</p>
+<p class="warn"><b>Lesson 9:</b> a glossary prompt made Whisper append a plausible task nobody said, and a forced language silently translates. No glossary, and a <code class="k">heard=</code> warning when the audio was another language.</p>
+</div>
+<div class="bench glass rv">
+<h3>Benchmark — English 59 s memo</h3>
+<p class="sub">6-core i5, no GPU, fresh process each run</p>
+<table>
+<thead><tr><th>Model (disk)</th><th>Time · <span style="color:#fcd34d">90 s rule</span></th><th>WER</th><th>Model load</th></tr></thead>
+<tbody>
+<tr><td>small <span style="color:var(--mut)">(0.5 GB)</span></td><td>10–12 s<div class="rb" style="--a:10;--b:12"><i></i></div></td><td>0.6 %</td><td>fast</td></tr>
+<tr><td>medium <span style="color:var(--mut)">(1.5 GB)</span></td><td>27–31 s<div class="rb" style="--a:27;--b:31"><i></i></div></td><td>0.6 %</td><td>—</td></tr>
+<tr class="def"><td>large-v3-turbo <span style="color:var(--mut)">(1.6 GB)</span><span class="dm">DEFAULT</span></td><td><b style="color:#fff">25–34 s</b><div class="rb" style="--a:25;--b:34"><i></i></div></td><td><b style="color:#fff">0 %</b></td><td>3–8 s quiet,<br>up to 90 s busy</td></tr>
+<tr class="slow"><td>large-v3 <span style="color:var(--mut)">(2.9 GB)</span></td><td>123 s · too slow<div class="rb" style="--a:121;--b:123"><i></i></div></td><td>2 %</td><td>62–67 s</td></tr>
+</tbody>
+</table>
+<div class="rbl" aria-hidden="true"><span>bars 0 → 130 s · bright = measured range</span><b>│ 90 s rule</b></div>
+<p class="wrule"><b style="color:#fff">The rule:</b> the most accurate model that transcribes a 60-second memo in under 90 seconds.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- QUICK START -->
+<section class="sec" id="start" aria-labelledby="st-h">
+<div class="wrap">
+<header class="sh c rv">
+<p class="eye">Quick start</p>
+<h2 id="st-h">Run your own <span class="g">in five steps</span></h2>
+<p>A sketch of the setup — the README has the full walkthrough, including the always-on recipe.</p>
+<div class="badges"><span><i></i>78 tests · Windows + Linux</span><span>supervisor: Python stdlib only</span><span>MIT licence</span></div>
+</header>
+<ol class="steps">
+<li class="sp2 glass rv"><div><h3>Clone the repo</h3><div class="cb"><code>git clone <span class="nw">https://github.com/PepeMilanese/Jarvis</span> &amp;&amp; cd Jarvis</code><button class="cp" type="button">Copy</button></div></div></li>
+<li class="sp2 glass rv"><div><h3>Create your bot and connect the channel</h3><p>Make a bot with <b>@BotFather</b>, then — inside the Jarvis folder, in <code class="k">claude</code> — install Claude Code's official Telegram channel plugin and give it the token. Pair your account once, then switch the bot to allowlist: only allow-listed users get through.</p><div class="cb cl"><code>/plugin install <span class="nw">telegram@claude-plugins-official</span></code><button class="cp" type="button">Copy</button></div><div class="cb cl"><code>/telegram:configure &lt;your-bot-token&gt;</code><button class="cp" type="button">Copy</button></div></div></li>
+<li class="sp2 glass rv"><div><h3>Check the machine</h3><p>The doctor checks what Jarvis needs and tells you what is missing.</p><div class="cb"><code>python -m jarvis doctor</code><button class="cp" type="button">Copy</button></div></div></li>
+<li class="sp2 glass rv"><div><h3>Add offline speech-to-text <span style="color:var(--mut);font-weight:500">(optional)</span></h3><p>Sets up faster-whisper and the large-v3-turbo model in its own venv.</p><div class="cb"><code>python -m jarvis stt-setup</code><button class="cp" type="button">Copy</button></div></div></li>
+<li class="sp2 glass rv"><div><h3>Start the supervisor — then make it permanent</h3><p>Run it once in a terminal; on Windows, install the scheduled tasks so it survives every reboot, and audit the always-on settings read-only.</p><div class="cb"><code>python -m jarvis dispatcher</code><button class="cp" type="button">Copy</button></div><div class="cb ps"><code>powershell <span class="nw">-NoProfile</span> <span class="nw">-ExecutionPolicy</span> Bypass <span class="nw">-File</span> <span class="nw">windows\install-tasks.ps1</span> <span class="nw">-BootReport</span></code><button class="cp" type="button">Copy</button></div><div class="cb ps"><code>powershell <span class="nw">-NoProfile</span> <span class="nw">-ExecutionPolicy</span> Bypass <span class="nw">-File</span> <span class="nw">windows\always-on\check.ps1</span></code><button class="cp" type="button">Copy</button></div></div></li>
+</ol>
+<div class="more rv"><a class="btn btn-p" href="https://github.com/PepeMilanese/Jarvis#readme"><svg aria-hidden="true"><use href="#gh"/></svg>Read the README</a></div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="wrap fin">
+<a class="brand" href="#top" aria-label="Jarvis, back to top"><svg aria-hidden="true"><use href="#mk"/></svg>JARVIS</a>
+<span>Built by Petar Trajchevski · MIT licence · <a href="https://github.com/PepeMilanese/Jarvis">github.com/PepeMilanese/Jarvis</a></span>
+<p class="l2">Built to drive a private ERP product — and everything else on one always-on PC.</p>
+</div>
+</footer>
+
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const Q=new URLSearchParams(location.search);
+const SPEED=Math.max(.25,Math.min(4,+Q.get('speed')||1));
+
+/* ---------- reveal + counters ---------- */
+const cnt=el=>{const to=+el.dataset.to,suf=el.dataset.suf||'';if(RM){el.textContent=to+suf;return}
+ const t0=performance.now(),d=1500;const f=n=>{const k=Math.min(1,(n-t0)/d),e=1-Math.pow(1-k,4);el.textContent=Math.round(to*e)+suf;if(k<1)requestAnimationFrame(f)};el.textContent='0'+suf;requestAnimationFrame(f)};
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -7% 0px',threshold:.06});
+$$('.rv').forEach(el=>io.observe(el));
+const cio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){cnt(e.target);cio.unobserve(e.target)}}),{threshold:.5});
+$$('.cnt').forEach(el=>cio.observe(el));
+
+/* ---------- hero notifications ---------- */
+const NOTES=[['🚀','slot 2 · started'],['🌿','branch pushed'],['📬','PR opened'],['🧐','reviewer verdict in'],['🟢','CI green'],['✅','done · proof: CI green'],['🎤','I heard: “check CI at 7”'],['⏰','scheduled · Tue 07:00'],['❓','your call: A or B?']];
+const stack=$('#stack');let ni=0,live=[];
+const mark='<svg viewBox="0 0 32 32" aria-hidden="true"><use href="#mkw"/></svg>';
+function note(instant){const[e,t]=NOTES[ni++%NOTES.length];const el=document.createElement('div');el.className='hn'+(instant?'':' enter');
+ el.innerHTML=`<span class="hn-ic">${mark}</span><div class="hn-b"><div class="hn-h">JARVIS<span>now</span></div><div class="hn-t">${e} ${t}</div></div>`;
+ stack.prepend(el);live.unshift(el);live.forEach((n,i)=>n.style.setProperty('--i',i));
+ if(live.length>4){const o=live.pop();o.classList.add('out');setTimeout(()=>o.remove(),700)}
+ if(!instant)requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.remove('enter')))}
+for(let i=0;i<4;i++)note(true);
+let heroOn=true,nt=null;
+if(!RM){nt=setInterval(()=>{if(heroOn&&!document.hidden)note(false)},2300);
+ new IntersectionObserver(es=>{heroOn=es[0].isIntersecting},{threshold:0}).observe($('.hero'))}
+
+/* ---------- copy buttons ---------- */
+$$('.cp').forEach(b=>b.addEventListener('click',async()=>{const t=b.previousElementSibling.textContent;
+ try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();try{document.execCommand('copy')}catch(__){}a.remove()}
+ b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1600)}));
+
+/* ---------- wedge ticker ---------- */
+const STEPS=['step: reading the failing test','step: pinning the clock','step: running the suite','step: pushing the branch','step: waiting for CI'];
+if(!RM){let si=0;setInterval(()=>{if(document.hidden)return;si=(si+1)%STEPS.length;$('#stepTick').textContent=STEPS[si]},1700)}
+
+/* ---------- 24h dial ---------- */
+(()=>{const s=$('#dial'),C=170,R=124,NS='http://www.w3.org/2000/svg';
+ const pt=(h,r)=>{const a=h/24*2*Math.PI-Math.PI/2;return[(C+r*Math.cos(a)).toFixed(1),(C+r*Math.sin(a)).toFixed(1)]};
+ const arc=(a,b,r)=>{const sp=(b-a+24)%24,[x1,y1]=pt(a,r),[x2,y2]=pt(b,r);return`M${x1} ${y1}A${r} ${r} 0 ${sp>12?1:0} 1 ${x2} ${y2}`};
+ let h=`<circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="16"/>`;
+ h+=`<path d="${arc(17.08,22.92,R)}" fill="none" stroke="#3b4a63" stroke-width="16"/>`;
+ h+=`<path d="${arc(23.08,16.92,R)}" fill="none" stroke="#22d3ee" stroke-width="16" style="filter:drop-shadow(0 0 8px rgba(34,211,238,.55))"/>`;
+ for(let i=0;i<24;i++){const[a,b]=pt(i,R+12),[c,d]=pt(i,R+(i%6?16:21));h+=`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${i%6?'rgba(255,255,255,.25)':'rgba(255,255,255,.6)'}" stroke-width="${i%6?1:1.6}"/>`}
+ [['00',0],['06',6],['12',12],['18',18]].forEach(([t,v])=>{const[x,y]=pt(v,R+33);h+=`<text x="${x}" y="${+y+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#b6c0d6">${t}</text>`});
+ for(let m=5;m<1440;m+=15){const[x,y]=pt(m/60,R-24);h+=`<circle cx="${x}" cy="${y}" r="1.9" fill="#34d399" opacity=".8"/>`}
+ const[a1,b1]=pt(6.75,R-38),[a2,b2]=pt(6.75,R+10),[a3,b3]=pt(6.75,R);
+ h+=`<line x1="${a1}" y1="${b1}" x2="${a2}" y2="${b2}" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/><circle cx="${a3}" cy="${b3}" r="6" fill="#a78bfa" stroke="#04060d" stroke-width="2.5"/>`;
+ const[lx,ly]=pt(6.75,R-68);h+=`<text x="${lx}" y="${+ly+4}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#c4b5fd">06:45</text>`;
+ const[tx,ty]=pt(23,R-44),[ux,uy]=pt(17,R-44);
+ h+=`<text x="${tx}" y="${+ty+4}" text-anchor="middle" font-size="10.5" fill="#7ee8fa">23:00</text><text x="${ux}" y="${+uy+4}" text-anchor="middle" font-size="10.5" fill="#7ee8fa">17:00</text>`;
+ h+=`<text x="${C-8}" y="${C+11}" text-anchor="middle" font-size="32" font-weight="800" fill="#fff" style="font-family:var(--disp)">24 h</text>`;
+ s.innerHTML=h})();
+
+/* ================= FLOW ENGINE ================= */
+const COL={am:'#fbbf24',tg:'#3ea6f5',bl:'#60a5fa',cy:'#22d3ee',vi:'#a78bfa',pk:'#f472b6',in:'#818cf8',gr:'#34d399',rd:'#fb7185'};
+const NODES={phone:['📱','Phone','you · Telegram app','am'],tg:['✈️','Telegram','Bot API · allowlist','tg'],plug:['🔌','Channel plugin','MCP · long-poll','bl'],disp:['🧠','Dispatcher','headless Claude Code','cy'],sched:['⏰','Schedule','schedule.json · 15 s','vi'],whis:['🎙️','Whisper','offline · CPU · int8','pk'],cli:['⌨️','Launcher CLI','python -m jarvis','in']};
+const ENDS={p_t:['phone','tg'],t_g:['tg','plug'],g_d:['plug','disp'],s_d:['sched','disp'],d_w:['disp','whis'],d_l:['disp','cli'],l1:['cli','s1'],l2:['cli','s2'],l3:['cli','s3'],k1:['wd1','wk1'],k2:['wd2','wk2'],k3:['wd3','wk3']};
+const LAY={
+ wide:{vb:[740,500],frame:[274,108,434,138],fl:[694,128],fl2:[694,236],
+  n:{phone:[48,22,160,58],tg:[290,22,160,58],plug:[532,22,160,58],disp:[290,146,160,60],sched:[532,146,160,60],whis:[48,146,160,60],cli:[290,274,160,48]},
+  s:[[19,354,218,136],[261,354,218,136],[503,354,218,136]],
+  e:{p_t:'M208 51H290',t_g:'M450 51H532',g_d:'M612 80C612 116 370 110 370 146',s_d:'M532 176H450',d_w:'M290 176H208',d_l:'M370 206V274',l1:'M370 322C370 342 128 334 128 354',l2:'M370 322V354',l3:'M370 322C370 342 612 334 612 354'}},
+ narrow:{vb:[360,556],frame:[6,180,348,110],fl:[346,282],
+  n:{phone:[14,14,152,54],tg:[194,14,152,54],plug:[194,98,152,54],disp:[14,208,152,58],sched:[194,208,152,58],cli:[14,316,152,52],whis:[194,316,152,52]},
+  s:[[8,410,110,138],[125,410,110,138],[242,410,110,138]],
+  e:{p_t:'M166 41H194',t_g:'M270 68V98',g_d:'M194 125C130 125 90 160 90 208',s_d:'M194 237H166',d_l:'M90 266V316',d_w:'M140 266C140 294 270 288 270 316',l1:'M90 368C90 390 63 388 63 410',l2:'M90 368C90 392 180 386 180 410',l3:'M90 368C90 394 297 384 297 410'}}
+};
+const WK={free:['idle','idle','free'],busy:['another job','busy','busy · another job'],run:['claude -p · running','running','running'],q:['❓ JARVIS-QUESTION','❓ question','reserved ❓'],sum:['JARVIS-SUMMARY','summary','summary'],done:['✅ done · slot freed','✅ done','done ✓']};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+let LK='',svg=null;
+function build(){
+ const key=matchMedia('(max-width: 760px)').matches?'narrow':'wide';if(key===LK)return false;LK=key;
+ const L=LAY[key],nar=key==='narrow',[W,H]=L.vb,f=L.frame;
+ let h=`<svg class="dg" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="dgT dgD"><title id="dgT">How one message travels through Jarvis</title><desc id="dgD">The phone sends a message to the Telegram Bot API; the channel plugin long-polls it and injects it into the dispatcher, a headless Claude Code session run by the supervisor next to the durable schedule. The dispatcher uses offline Whisper for voice memos and the launcher CLI to start workers in three slots, each a watchdog that owns one worker. Replies travel back the same way to the phone.</desc>`;
+ h+=`<rect class="frame" x="${f[0]}" y="${f[1]}" width="${f[2]}" height="${f[3]}" rx="16"/><text class="flab" x="${L.fl[0]}" y="${L.fl[1]}" text-anchor="end">SUPERVISOR</text>`;
+ if(L.fl2)h+=`<text class="flab2" x="${L.fl2[0]}" y="${L.fl2[1]}" text-anchor="end">python -m jarvis dispatcher</text>`;
+ for(const[id,d]of Object.entries(L.e))h+=`<path class="eb" d="${d}"/><path class="el" id="el-${id}" d="${d}"/>`;
+ const fs=nar?13.5:14,ss=nar?10.4:10.8,pad=nar?9:13;
+ const box=(id,x,y,w,hh,ic,t,s,c,ts,tss,sub)=>{const yt=sub?y+hh*.47:y+hh/2+ts*.36,ys=y+hh*.79;
+  return `<g class="nd" id="n-${id}" style="--c:${COL[c]}"><rect class="nb" x="${x}" y="${y}" width="${w}" height="${hh}" rx="11"/><rect class="nr" x="${x}" y="${y}" width="${w}" height="${hh}" rx="11"/>`+
+  `<text class="ni" x="${x+pad-1}" y="${yt}" font-size="${ts+1}">${ic}</text><text class="t1" x="${x+pad+ts+8}" y="${yt}" font-size="${ts}">${t}</text>`+
+  (sub?`<text class="t2" id="s-${id}" x="${x+pad}" y="${ys}" font-size="${tss}">${esc(s)}</text>`:'')+`</g>`};
+ for(const[id,[ic,t,s,c]]of Object.entries(NODES)){const[x,y,w,hh]=L.n[id];h+=box(id,x,y,w,hh,ic,t,s,c,fs,ss,true)}
+ L.s.forEach(([x,y,w,hh],i)=>{const n=i+1,cx=x+w/2,hy=nar?18:21;
+  const wd=nar?[x+8,y+27,w-16,32]:[x+12,y+31,w-24,38],wk=nar?[x+8,y+73,w-16,54]:[x+12,y+83,w-24,42];
+  h+=`<g class="slot st-free" id="n-s${n}"><rect class="sf" x="${x}" y="${y}" width="${w}" height="${hh}" rx="14"/><rect class="nr" x="${x}" y="${y}" width="${w}" height="${hh}" rx="14"/>`;
+  h+=`<text class="sl" x="${x+(nar?9:14)}" y="${y+hy}">SLOT ${n}</text><circle class="sd" cx="${x+w-(nar?13:16)}" cy="${y+hy-4}" r="4.2"/>`;
+  if(!nar)h+=`<text class="sst" id="ss-${n}" x="${x+w-27}" y="${y+hy}" text-anchor="end">free</text>`;
+  const kd=`M${cx} ${wd[1]+wd[3]}V${wk[1]}`;h+=`<path class="eb" d="${kd}"/><path class="el" id="el-k${n}" d="${kd}"/>`;
+  h+=box('wd'+n,wd[0],wd[1],wd[2],wd[3],'🛡️','Watchdog',nar?'':'pid · tree · ledger','in',nar?12:12.5,nar?10:10,!nar);
+  h+=box('wk'+n,wk[0],wk[1],wk[2],wk[3],'🛠️','Worker','idle','cy',nar?12:12.5,nar?10:10,true);
+  const ax=wk[0]+wk[2]-(nar?20:26),ay=wk[1]+(nar?10:9);
+  h+=`<g class="act">`+[0,1,2].map(j=>`<rect x="${ax+j*6}" y="${ay}" width="3.5" height="${nar?12:14}" rx="1.5"/>`).join('')+`</g></g>`});
+ const[wx,wy,ww,wh]=L.n.whis;
+ h+=`<g id="wbar"><rect class="wpt" x="${wx+pad}" y="${wy+wh-7}" width="${ww-2*pad}" height="3" rx="1.5"/><rect class="wpf" x="${wx+pad}" y="${wy+wh-7}" width="${ww-2*pad}" height="3" rx="1.5"/></g>`;
+ h+=`<g class="pk" id="pk" style="opacity:0"><circle class="pkh" r="11"/><circle class="pkc" r="4.6"/><g id="pkg" transform="translate(0,-19)"><rect class="pkr" id="pkr" x="-12" y="-9" width="24" height="16" rx="7"/><text class="pkt" id="pkt" text-anchor="middle" y="3"></text></g></g></svg>`;
+ $('#dia').innerHTML=h;svg=$('#dia svg');
+ // move whisper bar inside whisper node group for state classes
+ const wn=$('#n-whis',svg);wn.append($('#wbar',svg));
+ return true}
+
+/* ---- scenarios ---- */
+const me=(id,tx,tm,o={})=>s=>s.chat.push(Object.assign({id,me:1,tx,tm},o));
+const bot=(id,tx,tm,o={})=>s=>s.chat.push(Object.assign({id,tx,tm},o));
+const rx=(id,e)=>s=>{const m=s.chat.find(m=>m.id===id);if(m)m.rx=e};
+const sl=(n,v)=>s=>{s.sl[n]=v};
+const sub=(k,v)=>s=>{s.sub[k]=v};
+const TO_PHONE='-g_d -t_g -p_t';
+const typ=v=>s=>{s.typing=v};
+const reply=(fx,tag)=>[['fx',typ(1)],['go',TO_PHONE,'gr',tag],['fx',typ(0)],['fx',fx]];
+const SC=[
+{name:'Text message',init:{1:'busy',2:'free',3:'free'},steps:[
+ {t:'0.0 s',w:'Phone',f:'phone',d:'You type a task into the Jarvis chat on Telegram.',ops:[['fx',me('m1','Fix the flaky date test in the invoices module and open a PR','10:02')],['w',700]]},
+ {t:'0.3 s',w:'Telegram → plugin',f:'tg plug',d:'The channel plugin’s long-poll delivers it — only allow-listed users get through — and it auto-reacts 👀: received.',ops:[['go','p_t t_g','am','msg'],['go','-t_g -p_t','tg','👀'],['fx',rx('m1','👀')]]},
+ {t:'0.4 s',w:'plugin → dispatcher',f:'disp',d:'It is injected into the long-lived dispatcher session as a channel event.',c:'<channel source="telegram" chat_id=… message_id=…>',ops:[['go','g_d','am','msg']]},
+ {t:'1 s',w:'dispatcher → phone',f:'disp',d:'First action, always: react ⚡ — you can see it is being worked on, not just queued.',ops:[['go',TO_PHONE,'cy','⚡'],['fx',rx('m1','⚡')]]},
+ {t:'3 s',w:'dispatcher decides',f:'disp',d:'It changes state, so it becomes a worker job — and the dispatcher appends the task’s own acceptance test.',c:'proven right by: <outside check>',ops:[['fx',sub('disp','thinking…')],['w',1100],['fx',sub('disp','→ worker job')]]},
+ {t:'4 s',w:'dispatcher → launcher',f:'cli',d:'It hands the task file to the launcher CLI.',c:'python -m jarvis start --task-file F',ops:[['go','d_l','cy','start']]},
+ {t:'6 s',w:'launcher → slot 2',f:'s2',d:'The launcher picks free slot 2, writes the brief (generated header + worker contract), starts a detached watchdog and prints one JSON line.',ops:[['go','l2','in','brief'],['go','k2','in'],['fx',sl(2,'run')]]},
+ {t:'7 s',w:'dispatcher → phone',f:'phone',d:'The JSON line is back within seconds, and so is the phone update.',ops:[['go','-d_l','in','{json}'],...reply(bot('m2','🚀 slot 2 · started · I’ll report milestones','10:02'))]},
+ {t:'7 s →',w:'watchdog → worker',f:'s2',d:'claude -p runs in its own folder under the worker contract — one turn, foreground only — while the transcript streams to a log.',c:'claude -p  →  logs/…jsonl',ops:[['w',1500]]},
+ {t:'every 4 min',w:'schedule → dispatcher',f:'sched disp',d:'The schedule’s built-in watch entry pokes the dispatcher; it runs status, and only NEW milestones go out.',c:'[jarvis-schedule] watch poll  →  python -m jarvis status',ops:[['go','s_d','vi','poll'],['go','d_l l2','cy','status'],['go','-l2 -d_l','in','new']]},
+ {t:'milestones',w:'dispatcher → phone',f:'phone',d:'Milestones arrive as they happen — branch, pull request, CI.',ops:[['fx',typ(1)],['go',TO_PHONE,'gr','🌿'],['fx',typ(0)],['fx',bot('m3','🌿 branch pushed','10:09')],['w',450],['fx',bot('m4','📬 PR opened','10:11')],['w',450],['fx',bot('m5','🟢 CI green','10:17')]]},
+ {t:'summary',w:'worker',f:'s2',d:'The worker ends its one turn with a JARVIS-SUMMARY block: status, changed, proof, notes.',c:'JARVIS-SUMMARY · status · changed · proof · notes',ops:[['fx',sl(2,'sum')],['w',1000]]},
+ {t:'ledger',w:'watchdog',f:'s2 cli',d:'The watchdog classifies the run as done, writes the ledger and frees the slot — the slot change triggers an immediate poll.',ops:[['go','-k2','gr'],['fx',sl(2,'done')],['go','-l2 -d_l','gr','done']]},
+ {t:'done',w:'dispatcher → phone',f:'phone',d:'The result lands as a short summary — with a proof line from the outside check, not the agent’s word.',ops:reply(bot('m6','✅ done — the date test now runs on a fixed clock; PR open, CI green.','10:18',{pf:'proof: invoices suite green in CI on the PR head'}),'✅')}
+]},
+{name:'Voice memo',init:{1:'busy',2:'busy',3:'free'},steps:[
+ {t:'0.0 s',w:'Phone',f:'phone',d:'You hold the mic and talk — a voice memo instead of typing.',ops:[['fx',me('v1','','08:40',{voice:'0:24'})],['w',700]]},
+ {t:'0.3 s',w:'Telegram → plugin',f:'tg plug',d:'The plugin tags it as a voice attachment and auto-reacts 👀.',c:'attachment_kind="voice"',ops:[['go','p_t t_g','pk','🎤'],['go','-t_g -p_t','tg','👀'],['fx',rx('v1','👀')]]},
+ {t:'0.4 s',w:'plugin → dispatcher',f:'disp',d:'Injected into the dispatcher like any other message.',ops:[['go','g_d','pk','🎤']]},
+ {t:'1 s',w:'dispatcher → phone',f:'disp',d:'React ⚡ first — always.',ops:[['go',TO_PHONE,'cy','⚡'],['fx',rx('v1','⚡')]]},
+ {t:'download',w:'dispatcher ⇄ plugin',f:'plug disp',d:'It fetches the audio file with the plugin’s download tool.',c:'download_attachment',ops:[['go','-g_d','cy','get'],['go','g_d','pk','audio']]},
+ {t:'Whisper',w:'dispatcher → Whisper',f:'whis',d:'Transcribed on the CPU by Whisper large-v3-turbo — about 25–35 s for a one-minute memo on a quiet machine.',c:'python -m jarvis stt <file>',ops:[['go','d_w','pk','audio'],['fx',s=>{s.wp=1;s.sub.whis='transcribing…'}],['w',1700],['fx',s=>{s.wp=2;s.sub.whis='large-v3-turbo ✓'}],['go','-d_w','pk','text']]},
+ {t:'echo',w:'dispatcher → phone',f:'phone',d:'It replies with the verbatim transcript — immediately.',ops:reply(bot('v2','🎤 I heard: “Rename the Export button to Download and open a PR.”','08:41'),'🎤')},
+ {t:'act',w:'dispatcher → slot 3',f:'s3',d:'…and acts at once. No confirmation step: you read the echo while the job already runs, and say “stop” if it misheard.',c:'python -m jarvis start --task-file F',ops:[['go','d_l l3 k3','cy','start'],['fx',sl(3,'run')],['go','-k3 -l3 -d_l','in','{json}'],...reply(bot('v3','🚀 slot 3 · started · I’ll report milestones','08:41'))]},
+ {t:'cleanup',w:'Whisper',f:'whis',d:'The audio file is deleted. No speech service ever heard it.',ops:[['fx',s=>{s.wp=0;s.sub.whis='audio deleted 🗑'}],['w',1000]]}
+]},
+{name:'Scheduled',init:{1:'busy',2:'free',3:'free'},steps:[
+ {t:'0.0 s',w:'Phone',f:'phone',d:'You ask for something that should happen later.',ops:[['fx',me('c1','Check the nightly build at 7','22:14')],['w',600]]},
+ {t:'0.4 s',w:'phone → dispatcher',f:'tg plug disp',d:'Delivered, 👀, injected — the same path as any message.',ops:[['go','p_t t_g','am','msg'],['fx',rx('c1','👀')],['go','g_d','am','msg']]},
+ {t:'1 s',w:'dispatcher → phone',f:'disp',d:'⚡ first — always.',ops:[['go',TO_PHONE,'cy','⚡'],['fx',rx('c1','⚡')]]},
+ {t:'add',w:'dispatcher → schedule',f:'sched',d:'It writes a durable entry to schedule.json — one-shots, intervals, cron and the built-in watch entry all live there.',c:'python -m jarvis schedule add --at 07:00 --prompt-file F',ops:[['go','-s_d','vi','add'],['fx',sub('sched','check-build · Tue 07:00')]]},
+ {t:'confirm',w:'dispatcher → phone',f:'phone',d:'Confirmed on the phone — then the night goes by.',ops:reply(bot('c2','⏰ scheduled check-build for Tue 07:00','22:14'),'⏰')},
+ {t:'every 15 s',w:'supervisor tick',f:'sched',d:'A supervisor thread checks schedule.json every 15 s.',ops:[['fx',s=>{s.sub.sched='06:59:30';s.tick=1}],['w',600],['fx',sub('sched','06:59:45')],['w',600],['fx',s=>{s.sub.sched='07:00:00 · due';s.tick=0}],['w',400]]},
+ {t:'fire',w:'schedule → dispatcher',f:'disp',d:'Due — and the session is between turns, so the supervisor writes ONE stream-json user message. Written into a running turn, it would be merged into that turn.',c:'[jarvis-schedule] fire …',ops:[['go','s_d','vi','fire'],['fx',sub('disp','turn on the fire…')]]},
+ {t:'restart',w:'dispatcher',f:'disp',d:'The session dies before it finishes that turn, so the fire stays pending. The supervisor brings up a fresh session.',ops:[['fx',s=>{s.down=1;s.sub.disp='✕ session ended'}],['w',1200],['fx',s=>{s.down=0;s.sub.disp='fresh session'}],['w',300]]},
+ {t:'RE-SENT',w:'schedule → dispatcher',f:'sched disp',d:'The next session gets it, marked RE-SENT — at most 3 times.',c:'[jarvis-schedule] fire … RE-SENT',ops:[['go','s_d','vi','RE-SENT'],['fx',sub('disp','checking the build')],['w',700]]},
+ {t:'result',w:'dispatcher → phone',f:'phone',d:'Handled like any message — the answer comes back with its proof line.',ops:reply(bot('c3','✅ nightly build checked — it is green.','07:00',{pf:'proof: latest nightly run status, read from CI'}),'✅')}
+]},
+{name:'Question',init:{1:'busy',2:'busy',3:'free'},steps:[
+ {t:'0.0 s',w:'Phone',f:'phone',d:'You send a task.',ops:[['fx',me('q1','Add a CSV export to the reports page','14:20')],['w',600]]},
+ {t:'1 s',w:'phone → dispatcher',f:'tg plug disp',d:'Delivered, 👀, injected — and the dispatcher reacts ⚡.',ops:[['go','p_t t_g','am','msg'],['fx',rx('q1','👀')],['go','g_d','am','msg'],['go',TO_PHONE,'cy','⚡'],['fx',rx('q1','⚡')]]},
+ {t:'7 s',w:'dispatcher → slot 3',f:'s3',d:'A worker job starts in the free slot.',c:'python -m jarvis start --task-file F',ops:[['go','d_l l3 k3','cy','start'],['fx',sl(3,'run')],['go','-k3 -l3 -d_l','in','{json}'],...reply(bot('q2','🚀 slot 3 · started · I’ll report milestones','14:20'))]},
+ {t:'question',w:'worker',f:'s3',d:'The worker hits a real decision. It ends its turn with a JARVIS-QUESTION block — options A/B plus a default — and the slot stays reserved.',c:'JARVIS-QUESTION · A · B · default',ops:[['fx',sl(3,'q')],['w',1100]]},
+ {t:'ask',w:'dispatcher → phone',f:'phone',d:'The next poll picks it up and asks you.',ops:[['go','s_d','vi','poll'],['go','d_l l3','cy','status'],['go','-l3 -d_l','am','❓'],...reply(bot('q3','❓ Export every row, or only the filtered view?','14:31',{opt:'A · every row<br>B · filtered view<br>default: A · reply here'}),'❓')]},
+ {t:'reply',w:'phone → dispatcher',f:'disp',d:'You answer with one letter.',ops:[['fx',me('q4','B','14:33',{q:'❓ Export every row, or only the filtered view?'})],['go','p_t t_g g_d','am','B']]},
+ {t:'answer',w:'dispatcher → slot 3',f:'s3',d:'The dispatcher passes the answer to the reserved slot.',c:'python -m jarvis answer --slot 3 --text "B"',ops:[['go','d_l l3 k3','cy','B']]},
+ {t:'resume',w:'worker',f:'s3',d:'The worker resumes the SAME session — full context, nothing to re-explain.',c:'claude -p --resume <id>',ops:[['fx',sl(3,'run')],['w',1300],['fx',sl(3,'sum')],['w',500]]},
+ {t:'done',w:'dispatcher → phone',f:'phone',d:'Done — with proof.',ops:[['go','-k3 -l3 -d_l','gr','done'],['fx',sl(3,'done')],...reply(bot('q5','✅ done — CSV export of the filtered view; PR open, CI green.','14:52',{pf:'proof: export test green in CI on the PR head'}),'✅')]}
+]}];
+
+/* ---- engine state ---- */
+let sc=0,si=0,S=null,playing=false,stepping=false,TOK=0,vt=0,last=performance.now(),userPicked=false,started=false,visible=false,autoPaused=false;
+const anims=new Set();
+const HIST=[['09:58','slot 1 running · slots 2 and 3 free'],['08:31','slots 1 and 2 running · slot 3 free'],['22:09','slot 1 running · slots 2 and 3 free'],['14:16','slots 1 and 2 running · slot 3 free']];
+const init=()=>({chat:[{id:'h0',sep:'Today'},{id:'h1',me:1,tx:'status',tm:HIST[sc][0]},{id:'h2',tx:HIST[sc][1],tm:HIST[sc][0]}],sl:Object.assign({},SC[sc].init),sub:{},typing:0,down:0,wp:0,tick:0});
+function loop(n){const dt=Math.min(50,n-last);last=n;if(playing||stepping)vt+=dt*SPEED;anims.forEach(f=>f());requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+const wait=(ms,tok)=>new Promise(res=>{const t0=vt;const f=()=>{if(tok!==TOK){anims.delete(f);res(false)}else if(vt-t0>=ms){anims.delete(f);res(true)}};anims.add(f)});
+const ease=k=>-(Math.cos(Math.PI*k)-1)/2;
+function hit(id){const el=$('#n-'+id,svg);if(!el)return;el.classList.remove('hit');void el.getBoundingClientRect();el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),800)}
+function travel(route,c,tag,tok){
+ const pk=$('#pk',svg),segs=route.split(' ').map(r=>{const rev=r[0]==='-',id=rev?r.slice(1):r,p=$('#el-'+id,svg);return{id,rev,p,L:p.getTotalLength()}});
+ const total=segs.reduce((a,s)=>a+s.L,0),dur=Math.max(420,total/.36+segs.length*60),col=COL[c];
+ segs.forEach(s=>{s.p.style.transition='none';s.p.style.opacity=1;s.p.style.stroke=col;s.p.style.filter=`drop-shadow(0 0 4px ${col})`;s.p.style.strokeDasharray=`0 ${s.L+2}`});
+ pk.style.setProperty('--pc',col);pk.style.opacity=1;
+ const tg=$('#pkg',svg),tt=$('#pkt',svg);if(tag){tt.textContent=tag;const w=Math.max(18,tt.getComputedTextLength()+12);const r=$('#pkr',svg);r.setAttribute('width',w);r.setAttribute('x',-w/2);tg.style.display=''}else tg.style.display='none';
+ return new Promise(res=>{const t0=vt;let cur=0;
+  const f=()=>{if(tok!==TOK){anims.delete(f);res(false);return}
+   const k=Math.min(1,(vt-t0)/dur),d=ease(k)*total;let acc=0,pos=null;
+   segs.forEach((s,i)=>{const l=Math.max(0,Math.min(s.L,d-acc));s.p.style.strokeDasharray=s.rev?`0 ${s.L-l} ${l} ${s.L+2}`:`${l} ${s.L+2}`;
+    if(!pos&&(d<=acc+s.L||i===segs.length-1)){pos=s.p.getPointAtLength(s.rev?s.L-l:l);if(i>cur){for(let j=cur;j<i;j++)hit(ENDS[segs[j].id][segs[j].rev?0:1]);cur=i}}acc+=s.L});
+   pk.setAttribute('transform',`translate(${pos.x.toFixed(1)},${pos.y.toFixed(1)})`);
+   if(k>=1){anims.delete(f);const ls=segs[segs.length-1];hit(ENDS[ls.id][ls.rev?0:1]);pk.style.opacity=0;
+    segs.forEach(s=>{s.p.style.transition='opacity .9s ease';s.p.style.opacity=0});res(true)}};
+  anims.add(f)})}
+
+/* ---- render ---- */
+const chatEl=$('#chat'),tgs=$('#tgs'),ptime=$('#ptime');let lastSc=-1;
+const wave=[6,10,15,9,18,12,20,14,8,16,11,19,13,7,15,10,17,9,12,6,10,14,8,5].map(v=>`<i style="height:${v}px"></i>`).join('');
+function mkMsg(m){const el=document.createElement('div');el.dataset.id=m.id;if(m.sep){el.className='sep';el.textContent=m.sep;return el}el.className='b '+(m.me?'me':'bot');let h='';
+ if(m.q)h+=`<div class="rq"><b>Jarvis</b><span>${m.q}</span></div>`;
+ if(m.voice)h+=`<div class="vc"><span class="vp"><svg viewBox="0 0 24 24"><path d="M6 4v16l14-8z"/></svg></span><span><span class="vw">${wave}</span><span class="vd">${m.voice}</span></span></div>`;
+ else h+=`<div>${m.tx}</div>`;
+ if(m.opt)h+=`<span class="opt">${m.opt}</span>`;
+ if(m.pf)h+=`<div class="pf">${m.pf}</div>`;
+ h+=`<div class="ft"><span class="rx" hidden></span><span class="tm">${m.tm}${m.me?'<i class="ck">✓✓</i>':''}</span></div>`;
+ el.innerHTML=h;return el}
+function paint(instant){
+ if(!svg)return;
+ if(lastSc!==sc){chatEl.innerHTML='';lastSc=sc}
+ const ids=new Set(S.chat.map(m=>m.id));
+ [...chatEl.children].forEach(el=>{if(!ids.has(el.dataset.id))el.remove()});
+ S.chat.forEach(m=>{let el=chatEl.querySelector(`[data-id="${m.id}"]`);if(!el){el=mkMsg(m);if(!instant&&!RM)el.classList.add('new');chatEl.append(el)}
+  const r=el.querySelector('.rx');if(!r)return;if(m.rx){if(r.textContent!==m.rx){r.textContent=m.rx;r.hidden=false;if(!instant&&!RM){r.classList.remove('pop');void r.offsetWidth;r.classList.add('pop')}}}else{r.hidden=true;r.textContent=''}});
+ tgs.textContent=S.typing?'typing…':'bot';tgs.className=S.typing?'ty':'';
+ const lt=[...S.chat].reverse().find(m=>m.tm);if(lt)ptime.textContent=lt.tm;
+ const nar=LK==='narrow';
+ [1,2,3].forEach(n=>{const g=$('#n-s'+n,svg),v=S.sl[n];['free','busy','run','q','sum','done'].forEach(k=>g.classList.toggle('st-'+k,k===v));
+  const t=$('#s-wk'+n,svg);if(t)t.textContent=WK[v][nar?1:0];const h=$('#ss-'+n,svg);if(h)h.textContent=WK[v][2]});
+ $('#s-disp',svg).textContent=S.sub.disp||NODES.disp[2];
+ $('#s-sched',svg).textContent=S.sub.sched||NODES.sched[2];
+ $('#s-whis',svg).textContent=S.sub.whis||NODES.whis[2];
+ const d=$('#n-disp',svg);d.classList.toggle('down',!!S.down);
+ const w=$('#n-whis',svg);w.classList.toggle('busy',S.wp===1);w.classList.toggle('fin',S.wp===2);
+ $('#n-sched',svg).classList.toggle('tick',!!S.tick)}
+function focus(f){$$('.nd,.slot',svg).forEach(g=>g.classList.remove('on'));(f||'').split(' ').forEach(id=>{const g=$('#n-'+id,svg);if(g)g.classList.add('on')})}
+const tl=$('#tl'),capT=$('#capT'),capW=$('#capW'),capN=$('#capN'),capD=$('#capD'),capC=$('#capC'),prog=$('#prog'),bPlay=$('#bPlay'),cap=$('#cap');
+function buildTL(){tl.innerHTML=SC[sc].steps.map((s,i)=>`<li><button type="button" data-i="${i}" aria-label="Step ${i+1}: ${esc(s.w)}">${esc(s.t)}</button></li>`).join('')}
+tl.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cap.setAttribute('aria-live','polite');go(+b.dataset.i,true)}});
+function caption(i){const st=SC[sc].steps[i],n=SC[sc].steps.length;
+ capT.innerHTML=`<small>${/^[0-9]/.test(st.t)?'TIME':'STEP'}</small>${esc(st.t)}`;capW.textContent=st.w;capN.textContent=`${i+1} / ${n}`;capD.textContent=st.d;
+ capC.textContent=st.c||'·';capC.style.visibility=st.c?'visible':'hidden';capC.setAttribute('aria-hidden',st.c?'false':'true');
+ [...tl.children].forEach((li,k)=>{li.className=k<i?'done':k===i?'cur':''});
+ const cb=tl.children[i];if(cb&&tl.scrollWidth>tl.clientWidth){tl.scrollTo({left:cb.offsetLeft-tl.clientWidth/2+cb.offsetWidth/2,behavior:RM?'auto':'smooth'})}
+ prog.style.width=((i+1)/n*100)+'%'}
+function setPlay(v){playing=v;bPlay.classList.toggle('on',v);bPlay.setAttribute('aria-label',v?'Pause':'Play')}
+function rebuild(i){S=init();for(let k=0;k<i;k++)SC[sc].steps[k].ops.forEach(o=>{if(o[0]==='fx')o[1](S)})}
+async function run(i,animate){
+ const tok=++TOK;si=i;rebuild(i);
+ const pk=svg&&$('#pk',svg);if(pk)pk.style.opacity=0;$$('.el',svg).forEach(p=>{p.style.transition='none';p.style.opacity=0});
+ paint(true);caption(i);focus(SC[sc].steps[i].f);
+ const ops=SC[sc].steps[i].ops;
+ if(!animate||RM&&!playing){ops.forEach(o=>{if(o[0]==='fx')o[1](S)});paint(true);stepping=false;return}
+ stepping=true;
+ for(const o of ops){if(tok!==TOK)return;
+  if(o[0]==='go'){if(!RM&&!await travel(o[1],o[2],o[3],tok))return}
+  else if(o[0]==='fx'){o[1](S);paint(false)}
+  else if(o[0]==='w'){if(!await wait(RM?Math.min(o[1],300):o[1],tok))return}}
+ stepping=false;
+ if(!await wait(1300,tok))return;
+ if(playing)advance(tok)}
+async function advance(tok){const n=SC[sc].steps.length;
+ if(si<n-1){run(si+1,true);return}
+ stepping=true;const ok=await wait(4200,tok);stepping=false;if(!ok||!playing)return;
+ if(!userPicked){selectTab((sc+1)%SC.length,false)}else run(0,true)}
+function go(i,anim){run(Math.max(0,Math.min(SC[sc].steps.length-1,i)),anim)}
+function selectTab(i,user){sc=i;if(user)userPicked=true;$$('.tab').forEach((t,k)=>{t.setAttribute('aria-selected',k===i);t.tabIndex=k===i?0:-1});$('#fpanel').setAttribute('aria-labelledby','tab'+i);buildTL();run(0,true)}
+$$('.tab').forEach((t,k)=>{t.addEventListener('click',()=>{setPlay(true);selectTab(k,true)});
+ t.addEventListener('keydown',e=>{let j=null;if(e.key==='ArrowRight')j=(k+1)%4;if(e.key==='ArrowLeft')j=(k+3)%4;if(e.key==='Home')j=0;if(e.key==='End')j=3;if(j!==null){e.preventDefault();$$('.tab')[j].focus();setPlay(true);selectTab(j,true)}})});
+bPlay.addEventListener('click',()=>{if(playing){setPlay(false)}else{setPlay(true);if(!stepping&&!anims.size)advance(TOK)}});
+$('#bNext').addEventListener('click',()=>{cap.setAttribute('aria-live','polite');setPlay(false);go(si+1,true)});
+$('#bPrev').addEventListener('click',()=>{cap.setAttribute('aria-live','polite');setPlay(false);go(si-1,true)});
+$('#bReplay').addEventListener('click',()=>{setPlay(true);userPicked=true;run(0,true)});
+$('#watch').addEventListener('click',e=>{e.preventDefault();const b=$('#flowBox');b.classList.add('in');let y=0,el=b;while(el){y+=el.offsetTop;el=el.offsetParent}
+ scrollTo({top:Math.max(0,y-(innerHeight>b.offsetHeight+80?76:66)),behavior:RM?'auto':'smooth'});if(!RM){started=true;setTimeout(()=>{setPlay(true);run(0,true)},600)}});
+build();buildTL();
+if(RM){const n=SC[0].steps.length;run(n-1,false)}else{S=init();paint(true);caption(0);focus('phone')}
+new IntersectionObserver(es=>{visible=es[0].isIntersecting;
+ if(visible&&!started&&!RM){started=true;setPlay(true);run(0,true)}
+ else if(!visible&&playing){autoPaused=true;setPlay(false)}
+ else if(visible&&autoPaused){autoPaused=false;setPlay(true);if(!stepping&&!anims.size)advance(TOK)}},{threshold:.3}).observe($('#flowBox'));
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(build())run(si,playing)},150)});
+})();
+</script>
+</body>
+</html>

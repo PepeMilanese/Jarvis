@@ -1,0 +1,30 @@
+# your config and everything Jarvis writes at run time
+jarvis.toml
+logs/
+jobs/
+locks/
+work/
+schedule.json
+schedule.json.lock
+schedule-history.jsonl
+ledger.jsonl
+
+# offline speech-to-text: the venv, the models (GBs), temp audio
+stt/.venv/
+stt/models/
+stt/tmp/
+
+# secrets never live in the repo
+*.local
+.env
+.env.*
+
+# python / editors / OS
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
