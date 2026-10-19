@@ -52,10 +52,10 @@ From the first job on 10 Sep 2026 to 19 Oct 2026, read from the production ledge
 | **92 %** | of runs finished with a clean, structured summary · 17 stopped to ask a question and were resumed from the phone |
 | **60** | pull requests merged by worker sessions (155 counting a separate nightly automation, not in this repo) |
 | **3** | parallel slots — slot 1 ran 155 runs, slot 2 ran 90, slot 3 ran 55 · busiest day: **33 runs** · longest single run: **~36 h** |
-| **~370 / ~960** | phone messages handled / replies sent by the dispatcher |
+| **~370&nbsp;/&nbsp;~960** | phone messages handled / replies sent by the dispatcher |
 | **~20** | voice memos, transcribed **on the PC** by Whisper (no speech-to-text service ever heard them) |
-| **53 · 46 · 7** | dispatcher sessions brought up · fresh-context restarts (36 scheduled at 06:45, 10 on demand) · self-healing guards that fired for real |
-| **3.2 min** | after an unattended reboot, the boot report (set for 3 minutes after sign-in) found everything already up — sign-in itself took ~30 s, with nobody at the keyboard |
+| **53&nbsp;·&nbsp;46&nbsp;·&nbsp;7** | dispatcher sessions brought up · fresh-context restarts (36 scheduled at 06:45, 10 on demand) · self-healing guards that fired for real |
+| **3.2&nbsp;min** | after an unattended reboot, the boot report (set for 3 minutes after sign-in) found everything already up — sign-in itself took ~30 s, with nobody at the keyboard |
 
 ---
 
@@ -208,21 +208,29 @@ its own watchdog, and the next dispatcher picks them up with its first `status`.
 ## Architecture
 
 ```mermaid
-flowchart LR
-    phone([📱 You]) -- text / voice --> tg[Telegram Bot API]
-    tg <--> plugin[Telegram channel plugin<br/>MCP server on Bun]
-    subgraph host [Always-on PC]
-      sup[Supervisor<br/>python -m jarvis dispatcher]
-      sup -- stdin/stdout stream-json --> disp[Dispatcher<br/>headless Claude Code]
+flowchart TB
+    phone(["📱 You — text or voice memo"]) --> tg["Telegram Bot API<br/>allow-listed senders only"]
+    subgraph host ["Always-on PC"]
+      direction TB
+      plugin["Telegram channel plugin<br/>MCP server on Bun"]
+      sched[("schedule.json")]
+      sup["Supervisor<br/>python -m jarvis dispatcher"]
+      disp["Dispatcher<br/>headless Claude Code"]
+      stt["Whisper, on the PC<br/>python -m jarvis stt"]
+      cli["Launcher<br/>start · status · answer · stop"]
+      s1["Slot 1<br/>watchdog → claude -p"]
+      s2["Slot 2<br/>watchdog → claude -p"]
+      s3["Slot 3<br/>watchdog → claude -p"]
+      ledger[("jobs/ · logs/ · ledger.jsonl")]
       plugin <--> disp
-      sched[(schedule.json)] -. fires between turns .-> sup
-      disp -- Bash --> cli[Launcher CLI<br/>start · status · answer · stop]
-      cli --> s1[Slot 1<br/>watchdog → claude -p]
-      cli --> s2[Slot 2<br/>watchdog → claude -p]
-      cli --> s3[Slot 3<br/>watchdog → claude -p]
-      disp -- voice memo --> stt[Whisper, offline<br/>python -m jarvis stt]
-      s1 & s2 & s3 --> ledger[(jobs/ · logs/ · ledger.jsonl)]
+      sched -. "fires between turns" .-> sup
+      sup -- "stdin / stdout stream-json" --> disp
+      disp -- "voice memo" --> stt
+      disp -- "Bash" --> cli
+      cli --> s1 & s2 & s3
+      s1 & s2 & s3 --> ledger
     end
+    tg <--> plugin
 ```
 
 | Piece | What it does | Where |
